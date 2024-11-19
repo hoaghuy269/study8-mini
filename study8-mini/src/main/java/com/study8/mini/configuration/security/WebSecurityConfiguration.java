@@ -1,5 +1,6 @@
 package com.study8.mini.configuration.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
@@ -12,5 +13,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
-
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
+    }
 }
