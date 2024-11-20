@@ -1,5 +1,6 @@
 package com.study8.mini.auth.dto;
 
+import com.study8.mini.common.dto.CommonDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AuthRoleDto {
+public class AuthRoleDto extends CommonDto {
     private Long id;
     private String name;
 }
