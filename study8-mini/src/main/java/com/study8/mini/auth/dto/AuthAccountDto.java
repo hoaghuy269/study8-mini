@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * AuthAccountDto
  * @Date: 2024-11-19
@@ -16,8 +18,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthAccountDto extends CommonDto {
     private Long id;
+    private String username;
     private String code;
     private String email;
     private String password;
     private String status;
+    private List<AuthRoleDto> roles;
 }

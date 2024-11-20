@@ -12,34 +12,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * AuthAccount
- * @Date: 2024-11-19
+ * AuthRole
+ * @Date: 2024-11-20
  * @Author: HuyNH
- * @Desc: AuthAccount
+ * @Desc: AuthRole
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "auth_account")
-public class AuthAccount extends CommonEntity {
+@Table(name = "auth_role")
+public class AuthRole extends CommonEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
-    private String username;
-
-    @Column(name = "code")
-    private String code;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "status")
-    private String status;
+    @Column(name = "name")
+    private String name;
 }

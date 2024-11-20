@@ -1,5 +1,7 @@
 package com.study8.mini.auth.service;
 
+import com.study8.mini.configuration.security.UserPrincipal;
+
 /**
  * AuthAccountService
  * @Date: 2024-11-19
@@ -7,4 +9,5 @@ package com.study8.mini.auth.service;
  * @Desc: AuthAccountService
  */
 public interface AuthAccountService {
+    UserPrincipal loadUserPrincipal(String username);
 }

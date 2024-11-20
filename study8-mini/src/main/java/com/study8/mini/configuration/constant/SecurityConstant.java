@@ -4,10 +4,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * SysConstant
- * @Date: 2024-06-28
+ * SecurityConstant
+ * @Date: 2024-11-20
  * @Author: HuyNH
- * @Desc: Sys constant
+ * @Desc: SecurityConstant
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SecurityConstant {

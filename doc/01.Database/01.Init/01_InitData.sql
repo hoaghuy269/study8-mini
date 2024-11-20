@@ -1,19 +1,39 @@
 /**
- * @Date: 2024-11-19
+ * @Date: 2024-11-20
  * @Author: HuyNH
- * @Desc: Init table auth_account
+ * @Desc: Add data roles
  */
-drop table if exists auth_account;
-create table auth_account (
-    id BIGSERIAL PRIMARY KEY,
-    code VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    "password" VARCHAR(255),
-    status VARCHAR(10) NOT NULL,
-    created_date TIMESTAMP NOT NULL,
-    created_id BIGINT,
-    updated_date TIMESTAMP,
-    updated_id BIGINT,
-    deleted_date TIMESTAMP,
-    deleted_id BIGINT
-);
+delete from auth_role;
+INSERT INTO auth_role
+("name", created_date, created_id)
+VALUES('ROLE_ADMIN', current_timestamp, 1);
+INSERT INTO auth_role
+("name", created_date, created_id)
+VALUES('ROLE_STUDENT', current_timestamp, 1);
+INSERT INTO auth_role
+("name", created_date, created_id)
+VALUES('ROLE_TEACHER', current_timestamp, 1);
+INSERT INTO auth_role
+("name", created_date, created_id)
+VALUES('ROLE_VISITOR', current_timestamp, 1);
+
+/**
+ * @Date: 2024-11-20
+ * @Author: HuyNH
+ * @Desc: Add jwt secret
+ */
+delete from sys_configuration WHERE code = 'JWT_SECRET';
+INSERT INTO sys_configuration
+(group_code, code, value, created_date, created_id)
+VALUES('JWT', 'JWT_SECRET', '***', current_timestamp, 1);
+
+/**
+ * @Date: 2024-11-20
+ * @Author: HuyNH
+ * @Desc: Add jwt ex
+ */
+delete from sys_configuration WHERE code = 'JWT_EXPIRATION';
+INSERT INTO sys_configuration
+(group_code, code, value, created_date, created_id)
+VALUES('JWT', 'JWT_EXPIRATION', '1800000', current_timestamp, 1);
+

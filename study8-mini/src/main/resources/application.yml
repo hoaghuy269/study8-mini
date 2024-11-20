@@ -9,6 +9,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  cache:
+    type: redis
 camunda:
   bpm:
     admin-user:
