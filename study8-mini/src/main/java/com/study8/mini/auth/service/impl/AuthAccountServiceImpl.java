@@ -9,12 +9,12 @@ import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.auth.service.AuthRoleService;
 import com.study8.mini.configuration.security.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * AuthAccountServiceImpl
@@ -37,13 +37,13 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 
     @Override
     public UserPrincipal loadUserPrincipal(String username) {
-        AuthAccount account = authAccountRepository.findByUsername(username)
-                .orElse(null);
-        if (ObjectUtils.isNotEmpty(account)) {
-            AuthAccountDto accountDto = objectMapper.convertValue(account, AuthAccountDto.class);
+        Optional<AuthAccount> account = authAccountRepository.findByUsername(username);
+        if (account.isPresent()) {
+            AuthAccount accountEntity = account.get();
+            AuthAccountDto accountDto = objectMapper.convertValue(accountEntity, AuthAccountDto.class);
 
             //Roles
-            List<AuthRoleDto> roles = authRoleService.getRoles(account.getId());
+            List<AuthRoleDto> roles = authRoleService.getRoles(accountEntity.getId());
             accountDto.setRoles(roles);
 
             return UserPrincipal.build(accountDto);
