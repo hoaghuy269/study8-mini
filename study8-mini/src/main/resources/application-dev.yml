@@ -9,6 +9,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  cache:
+    type: redis
+  data:
+    redis:
+      url: ${REDIS_URL}
 camunda:
   bpm:
     admin-user:
@@ -19,3 +24,7 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+jwt:
+  expiration: 1800000
+server:
+  port: 8089
