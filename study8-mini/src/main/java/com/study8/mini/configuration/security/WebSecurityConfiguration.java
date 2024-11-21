@@ -1,5 +1,6 @@
 package com.study8.mini.configuration.security;
 
+import com.study8.mini.rest.constant.ApiConstant;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 /**
  * WebSecurityConfiguration
  * @Date: 2024-11-19
@@ -23,7 +26,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
-    private static final String AUTH_URL = "/login";
+    private static final List<String> API_PERMIT_ALL = List.of(
+            ApiConstant.API_CAMUNDA + ApiConstant.API_ALL
+    );
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -56,7 +61,8 @@ public class WebSecurityConfiguration {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(AUTH_URL).permitAll()
+                        auth.requestMatchers(API_PERMIT_ALL.toArray(new String[0]))
+                                .permitAll()
                                 .anyRequest().authenticated()
                 );
         http.authenticationProvider(authenticationProvider);

@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiConstant {
+    public static final String API_ALL = "/**";
+    public static final String API_CAMUNDA = "/camunda";
     public static final String API_AUTH = "/auth";
     public static final String API_LOGIN = "/login";
     public static final String API_LOGOUT = "/logout";
