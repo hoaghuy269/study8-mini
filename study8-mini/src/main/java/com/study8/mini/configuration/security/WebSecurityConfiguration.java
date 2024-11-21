@@ -1,5 +1,6 @@
 package com.study8.mini.configuration.security;
 
+import com.study8.mini.configuration.constant.SecurityConstant;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,8 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
-    private static final String AUTH_URL = "/login";
-
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
@@ -56,7 +55,8 @@ public class WebSecurityConfiguration {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(AUTH_URL).permitAll()
+                        auth.requestMatchers(SecurityConstant.CAMUNDA_URL)
+                                .permitAll()
                                 .anyRequest().authenticated()
                 );
         http.authenticationProvider(authenticationProvider);
