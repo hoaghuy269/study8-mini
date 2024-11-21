@@ -24,5 +24,7 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+jwt:
+  expiration: 1800000
 server:
   port: 8089
