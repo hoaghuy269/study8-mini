@@ -1,6 +1,6 @@
 package com.study8.mini.configuration.security;
 
-import com.study8.mini.rest.constant.ApiConstant;
+import com.study8.mini.configuration.constant.SecurityConstant;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,8 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.List;
-
 /**
  * WebSecurityConfiguration
  * @Date: 2024-11-19
@@ -26,10 +24,6 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
-    private static final List<String> API_PERMIT_ALL = List.of(
-            ApiConstant.API_CAMUNDA + ApiConstant.API_ALL
-    );
-
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
@@ -61,7 +55,7 @@ public class WebSecurityConfiguration {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(API_PERMIT_ALL.toArray(new String[0]))
+                        auth.requestMatchers(SecurityConstant.CAMUNDA_URL)
                                 .permitAll()
                                 .anyRequest().authenticated()
                 );
