@@ -81,14 +81,6 @@
 			<version>42.7.3</version>
 		</dependency>
 
-		<!--Dev Tool-->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.32</version>
-			<scope>provided</scope>
-		</dependency>
-
 		<!--Camunda-->
 		<dependency>
 			<groupId>org.camunda.bpm.springboot</groupId>
@@ -133,6 +125,20 @@
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
 			<scope>runtime</scope>
+		</dependency>
+
+		<!--Dev Tool-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.32</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency> <!--Convert json LocalDatetime-->
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.15.1</version>
 		</dependency>
 	</dependencies>
 

@@ -11,6 +11,9 @@ spring:
       ddl-auto: none
   cache:
     type: redis
+  data:
+    redis:
+      url: ${REDIS_URL}
 camunda:
   bpm:
     admin-user:

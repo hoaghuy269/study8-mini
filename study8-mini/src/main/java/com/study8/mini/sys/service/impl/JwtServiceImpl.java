@@ -41,34 +41,6 @@ public class JwtServiceImpl implements JwtService {
     private int defaultJwtExpiration;
 
     @Override
-    public String getJwtSecret() {
-        String jwtSecret = null;
-        Cache cache = cacheManager.getCache(SysConstant.DEFAULT_CACHE);
-        if (ObjectUtils.isNotEmpty(cache)) {
-            jwtSecret = cache.get(SysConstant.JWT_SECRET_CACHE_KEY, String.class);
-            if (StringUtils.isEmpty(jwtSecret)) {
-                jwtSecret = sysConfigurationService.getStringConfig(SysConstant.JWT, SysConstant.JWT_SECRET);
-            }
-        }
-        return jwtSecret;
-    }
-
-    @Override
-    public Integer getJwtExpiration() {
-        Integer jwtExpiration = null;
-        Cache cache = cacheManager.getCache(SysConstant.DEFAULT_CACHE);
-        if (ObjectUtils.isNotEmpty(cache)) {
-            jwtExpiration = cache.get(SysConstant.JWT_EXPIRATION_CACHE_KEY, Integer.class);
-            if (jwtExpiration == null) {
-                jwtExpiration = sysConfigurationService.getIntConfig(SysConstant.JWT, SysConstant.JWT_EXPIRATION);
-            } else {
-                jwtExpiration = defaultJwtExpiration;
-            }
-        }
-        return jwtExpiration;
-    }
-
-    @Override
     public String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader(SecurityConstant.AUTHORIZATION);
         if (StringUtils.isNotEmpty(headerAuth)
@@ -123,15 +95,36 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private SecretKey getSecretKey() {
-        String jwtSecret = this.getJwtSecret();
-        if (StringUtils.isEmpty(jwtSecret)) {
-            log.error("JwtUtils | getSecretKey | JWT Secret not found");
-        }
         try {
-            return Keys.hmacShaKeyFor(jwtSecret
-                    .getBytes(StandardCharsets.UTF_8));
+            String jwtSecret;
+            Cache cache = cacheManager.getCache(SysConstant.DEFAULT_CACHE);
+            if (ObjectUtils.isNotEmpty(cache)) {
+                jwtSecret = cache.get(SysConstant.JWT_SECRET_CACHE_KEY, String.class);
+                if (StringUtils.isEmpty(jwtSecret)) {
+                    jwtSecret = sysConfigurationService.getStringConfig(SysConstant.JWT, SysConstant.JWT_SECRET);
+
+                    cache.put(SysConstant.JWT_SECRET_CACHE_KEY, jwtSecret);
+                }
+                return Keys.hmacShaKeyFor(jwtSecret
+                        .getBytes(StandardCharsets.UTF_8));
+            }
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            log.error("JwtServiceImpl | getSecretKey", e);
         }
+        return null;
+    }
+
+    public Integer getJwtExpiration() {
+        Integer jwtExpiration = null;
+        Cache cache = cacheManager.getCache(SysConstant.DEFAULT_CACHE);
+        if (cache != null) {
+            jwtExpiration = cache.get(SysConstant.JWT_EXPIRATION_CACHE_KEY, Integer.class);
+            if (jwtExpiration == null) {
+                jwtExpiration = sysConfigurationService.getIntConfig(SysConstant.JWT, SysConstant.JWT_EXPIRATION);
+            } else {
+                jwtExpiration = defaultJwtExpiration;
+            }
+        }
+        return jwtExpiration;
     }
 }

@@ -30,7 +30,7 @@ public class CommonApiResponse<T> {
         CommonApiResponse<T> response = new CommonApiResponse<>();
 
         response.setStatusCode(CommonStatusCodeConstant.SUCCESS);
-        response.setTitle(messages.getString(CommonStatusCodeConstant.MESSAGE_SUCCESS));
+        response.setTitle(CommonStatusCodeConstant.MESSAGE_TILE_SUCCESS);
         response.setMessage(messages.getString(CommonStatusCodeConstant.MESSAGE_SUCCESS));
         response.setTime(LocalDateTime.now());
         response.setData(data);
@@ -56,7 +56,7 @@ public class CommonApiResponse<T> {
         CommonApiResponse<T> response = new CommonApiResponse<>();
 
         response.setStatusCode(CommonStatusCodeConstant.BAD_REQUEST);
-        response.setTitle(CommonStatusCodeConstant.MESSAGE_BAD_REQUEST);
+        response.setTitle(CommonStatusCodeConstant.MESSAGE_TITLE_BAD_REQUEST);
         response.setMessage(message);
         response.setTime(LocalDateTime.now());
         response.setData(null);
@@ -68,7 +68,7 @@ public class CommonApiResponse<T> {
         CommonApiResponse<T> response = new CommonApiResponse<>();
 
         response.setStatusCode(CommonStatusCodeConstant.UNAUTHORIZED);
-        response.setTitle(CommonStatusCodeConstant.MESSAGE_UNAUTHORIZED);
+        response.setTitle(CommonStatusCodeConstant.MESSAGE_TITLE_UNAUTHORIZED);
         response.setMessage(message);
         response.setTime(LocalDateTime.now());
         response.setData(null);

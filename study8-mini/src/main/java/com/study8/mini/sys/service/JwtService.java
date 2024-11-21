@@ -4,10 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 
 public interface JwtService {
-    String getJwtSecret();
-
-    Integer getJwtExpiration();
-
     String parseJwt(HttpServletRequest request);
 
     String generateJwtToken(Authentication authentication);

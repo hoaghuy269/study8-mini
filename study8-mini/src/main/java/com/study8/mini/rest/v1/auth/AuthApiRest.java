@@ -1,11 +1,10 @@
-package com.study8.mini.rest.auth.v1.api;
+package com.study8.mini.rest.v1.auth;
 
 import com.study8.mini.common.constant.CommonApiConstant;
 import com.study8.mini.common.rest.CommonApiResponse;
-import com.study8.mini.rest.auth.v1.req.LoginReq;
-import com.study8.mini.rest.auth.v1.res.LoginRes;
+import com.study8.mini.rest.v1.auth.req.LoginReq;
+import com.study8.mini.rest.v1.auth.res.LoginRes;
 import com.study8.mini.rest.constant.ApiConstant;
-import com.study8.mini.rest.constant.AuthApiConstant;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -29,7 +28,7 @@ public interface AuthApiRest {
      * @Author: HuyNH
      * @Desc: Login API
      */
-    @PostMapping(AuthApiConstant.API_LOGIN)
+    @PostMapping(ApiConstant.API_LOGIN)
     CommonApiResponse<LoginRes> login(@RequestBody @Valid LoginReq loginReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response);
 }

@@ -49,11 +49,6 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public AuthEntryPointJwt authEntryPointJwt(AuthEntryPointJwt authEntryPointJwt) {
-        return authEntryPointJwt;
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationProvider authenticationProvider,
                                            AuthEntryPointJwt unauthorizedHandler)
             throws Exception {

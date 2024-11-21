@@ -38,23 +38,24 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String jwt = jwtService.parseJwt(request);
-            if (StringUtils.isNotEmpty(jwt)
-                    && jwtService.validateToken(jwt)) {
-                String username = jwtService.getUserNameFormToken(jwt);
+            if (StringUtils.isNotEmpty(jwt)) {
+                boolean tokenValid = jwtService.validateToken(jwt);
+                if (tokenValid) {
+                    String username = jwtService.getUserNameFormToken(jwt);
 
-                UserPrincipal userPrincipal = authAccountService.loadUserPrincipal(username);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userPrincipal,
-                                null,
-                                userPrincipal.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    UserPrincipal userPrincipal = authAccountService.loadUserPrincipal(username);
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userPrincipal,
+                                    null,
+                                    userPrincipal.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         } catch (Exception e) {
             log.error("AuthTokenFilter | doFilterInternal", e);
-            throw new RuntimeException(e);
         }
         filterChain.doFilter(request, response);
     }

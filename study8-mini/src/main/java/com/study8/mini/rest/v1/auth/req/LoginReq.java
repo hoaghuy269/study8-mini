@@ -1,4 +1,4 @@
-package com.study8.mini.rest.auth.v1.req;
+package com.study8.mini.rest.v1.auth.req;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -18,7 +18,7 @@ import lombok.Setter;
 public class LoginReq {
     @Size(max = 255)
     @NotBlank
-    private String email;
+    private String username;
 
     @NotBlank
     private String password;

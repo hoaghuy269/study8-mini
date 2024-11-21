@@ -5,9 +5,11 @@ import com.study8.mini.common.rest.CommonApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
@@ -18,7 +20,11 @@ import java.io.IOException;
  * @Desc: AuthEntryPointJwt
  */
 @Slf4j
+@Service
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public void commence(HttpServletRequest request,
             HttpServletResponse response, AuthenticationException authException)
@@ -30,8 +36,6 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
         CommonApiResponse<Void> body = CommonApiResponse.handleAuthError(authException.getMessage());
 
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getOutputStream(), body);
-
+        objectMapper.writeValue(response.getOutputStream(), body);
     }
 }
