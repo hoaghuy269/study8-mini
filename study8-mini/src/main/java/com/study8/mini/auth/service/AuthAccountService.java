@@ -1,5 +1,6 @@
 package com.study8.mini.auth.service;
 
+import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.configuration.security.UserPrincipal;
 
 /**
@@ -10,4 +11,6 @@ import com.study8.mini.configuration.security.UserPrincipal;
  */
 public interface AuthAccountService {
     UserPrincipal loadUserPrincipal(String username);
+
+    AuthAccountDto register(AuthAccountDto dto);
 }
