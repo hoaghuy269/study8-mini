@@ -1,13 +1,11 @@
 package com.study8.mini.pm.service;
 
-import com.study8.mini.auth.dto.AuthAccountDto;
-
 /**
- * AuthAccountProcessService
+ * PmProcessService
  * @Date: 2024-11-25
  * @Author: HuyNH
- * @Desc: AuthAccountProcessService
+ * @Desc: PmProcessService
  */
 public interface PmProcessService {
-    AuthAccountDto saveProcess(Long )
+    void saveProcess(Long businessId, String processInstanceId, Long userId);
 }

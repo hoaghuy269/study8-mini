@@ -17,4 +17,6 @@ public interface AuthAccountService {
 
     AuthAccountDto register(AuthAccountDto dto, Locale locale)
             throws ApplicationException;
+
+    AuthAccountDto getByEmail(String email);
 }

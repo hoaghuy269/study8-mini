@@ -1,6 +1,6 @@
 package com.study8.mini.camunda.service.impl;
 
-import com.study8.mini.camunda.service.ProcessService;
+import com.study8.mini.camunda.service.CamundaService;
 import jakarta.transaction.Transactional;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class ProcessServiceImpl implements ProcessService {
+public class CamundaServiceImpl implements CamundaService {
     @Autowired
     private RuntimeService runtimeService;
 
