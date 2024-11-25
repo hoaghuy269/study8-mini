@@ -20,4 +20,5 @@ public class CommonStatusCodeConstant {
     public static final String MESSAGE_TITLE_UNAUTHORIZED = "Unauthorized";
 
     public static final String MESSAGE_SUCCESS = "MESSAGE_SUCCESS";
+    public static final String MESSAGE_BAD_REQUEST = "MESSAGE_BAD_REQUEST";
 }

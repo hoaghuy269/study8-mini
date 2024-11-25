@@ -12,4 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CoreConstant {
     public static final String MESSAGES_SOURCE = "study8_mini_messages";
+    public static final String ACCEPT_LANGUAGE = "Accept-Language";
+    public static final String VI = "vi";
+    public static final String EN = "en";
 }

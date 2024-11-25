@@ -93,4 +93,44 @@ CREATE TABLE sys_configuration (
     deleted_id BIGINT
 );
 
+/**
+ * @Date: 2024-11-25
+ * @Author: HuyNH
+ * @Desc: Remove username not null
+ */
+drop table if exists auth_account;
+create table auth_account (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255),
+    status VARCHAR(10) NOT NULL,
+    created_date TIMESTAMP NOT NULL,
+    created_id BIGINT,
+    updated_date TIMESTAMP,
+    updated_id BIGINT,
+    deleted_date TIMESTAMP,
+    deleted_id BIGINT
+);
+
+/**
+ * @Date: 2024-11-25
+ * @Author: HuyNH
+ * @Desc: pm_process
+ */
+drop table if exists pm_process;
+create table pm_process (
+    id BIGSERIAL PRIMARY KEY,
+    business_id BIGINT,
+    process_id VARCHAR(30),
+    created_date TIMESTAMP NOT NULL,
+    created_id BIGINT,
+    updated_date TIMESTAMP,
+    updated_id BIGINT,
+    deleted_date TIMESTAMP,
+    deleted_id BIGINT
+);
+
+
 
