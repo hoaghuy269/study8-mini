@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Locale;
 
+/**
+ * AuthApiRestImpl
+ * @Date: 2024-11-25
+ * @Author: HuyNH
+ * @Desc: AuthApiRestImpl
+ */
 @RestController
 @Slf4j
 public class AuthApiRestImpl implements AuthApiRest {
@@ -36,12 +42,19 @@ public class AuthApiRestImpl implements AuthApiRest {
             HttpServletResponse response) {
         Locale locale = LanguageUtils.getLanguageFromHeader(request);
         try {
-            RegisterRes result = new RegisterRes();
+            if (bindingResult.hasErrors()) {
+                return CommonApiResponse.handleBindingResult(
+                        bindingResult, locale);
+            }
 
             AuthAccountDto registerDto = new AuthAccountDto();
             registerDto.setEmail(registerReq.getEmail());
+            registerDto.setStep(registerReq.getStep());
 
-            AuthAccountDto dto = authAccountService.register(registerDto);
+            AuthAccountDto dto = authAccountService.register(registerDto, locale);
+
+            RegisterRes result = new RegisterRes();
+            result.setUserId(dto.getId());
             return CommonApiResponse.handleSuccess(result, locale);
         } catch (Exception e) {
             log.error("AuthApiRestImpl | register", e);

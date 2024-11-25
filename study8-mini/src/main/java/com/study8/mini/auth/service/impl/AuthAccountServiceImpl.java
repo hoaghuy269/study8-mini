@@ -4,20 +4,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.dto.AuthRoleDto;
 import com.study8.mini.auth.entity.AuthAccount;
+import com.study8.mini.auth.enumf.AccountStatusEnum;
+import com.study8.mini.auth.enumf.CreateUserStepEnum;
 import com.study8.mini.auth.repository.AuthAccountRepository;
+import com.study8.mini.pm.service.PmProcessService;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.auth.service.AuthRoleService;
 import com.study8.mini.camunda.constant.ProcessConstant;
 import com.study8.mini.camunda.service.ProcessService;
 import com.study8.mini.configuration.security.UserPrincipal;
+import com.study8.mini.core.constant.CoreException;
+import com.study8.mini.core.constant.CoreSystem;
+import com.study8.mini.core.exception.ApplicationException;
+import com.study8.mini.core.util.ExceptionUtils;
+import com.study8.mini.core.util.UUIDUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -42,6 +53,12 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     @Autowired
     private ProcessService processService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private PmProcessService pmProcessService;
+
     @Override
     public UserPrincipal loadUserPrincipal(String username) {
         Optional<AuthAccount> account = authAccountRepository.findByUsername(username);
@@ -59,27 +76,54 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     }
 
     @Override
-    public AuthAccountDto register(AuthAccountDto dto) {
-        LocalDateTime today = LocalDateTime.now();
-        AuthAccount entity = new AuthAccount();
-
+    public AuthAccountDto register(AuthAccountDto dto, Locale locale)
+            throws ApplicationException {
         AuthAccountDto result = new AuthAccountDto();
-        if (dto.getId() == null) {
-            entity.setEmail(dto.getEmail());
-            entity.setUsername("GYUdsagdu");
-            entity.setCode("HGGYU");
-            entity.setCreatedDate(today);
-            entity.setStatus("1");
-            entity.setCreatedId(1L);
+        AuthAccount newEntity;
+        LocalDateTime today = LocalDateTime.now();
 
-            AuthAccount newEntity = authAccountRepository.save(entity);
-            this.handleRegisterProcess(newEntity.getId());
+        CreateUserStepEnum step = CreateUserStepEnum.resolveByValue(dto.getStep());
+        switch (step) {
+            case CREATE -> {
+                AuthAccount entity = new AuthAccount();
+                entity.setEmail(dto.getEmail());
+                entity.setCode(UUIDUtils.randomUUID());
+                entity.setStatus(AccountStatusEnum.NOT_VERIFIED.getValue());
+                entity.setCreatedDate(today);
+                entity.setCreatedId(CoreSystem.SYSTEM_ID);
+
+                //Do create account
+                newEntity = authAccountRepository.save(entity);
+
+                result = objectMapper.convertValue(newEntity, AuthAccountDto.class);
+            }
+            case OTP -> {
+                if (dto.getId() == null) {
+                    ExceptionUtils.throwApplicationException(
+                            CoreException.EXCEPTION_DATA_PROCESSING, locale);
+                }
+
+            }
+            case UNKNOWN -> ExceptionUtils.throwApplicationException(CoreException.EXCEPTION_DATA_PROCESSING, locale);
         }
-        return null;
+
+        //Handle process
+        this.handleRegisterProcess(result.getId(), step);
+
+        return result;
     }
 
-    private void handleRegisterProcess(Long businessId) {
-        ProcessInstance processInstance = processService.startProcess(ProcessConstant.PROCESS_REGISTER, businessId);
-        String id = processInstance.getId();
+    private void handleRegisterProcess(Long userId, CreateUserStepEnum step) {
+        switch (step) {
+            case CREATE -> {
+                ProcessInstance processInstance = processService.startProcess(ProcessConstant.PROCESS_REGISTER, userId);
+                if (ObjectUtils.isNotEmpty(processInstance)) {
+                    pmProcessService
+                }
+            }
+            case OTP -> {
+                processService.completeTask("3", "Task_0dfv74n");
+            }
+        }
     }
 }
