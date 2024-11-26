@@ -50,6 +50,7 @@ public class AuthApiRestImpl implements AuthApiRest {
             AuthAccountDto registerDto = new AuthAccountDto();
             registerDto.setEmail(registerReq.getEmail());
             registerDto.setStep(registerReq.getStep());
+            registerDto.setId(registerReq.getId());
 
             AuthAccountDto dto = authAccountService.register(registerDto, locale);
 

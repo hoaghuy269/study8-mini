@@ -1,17 +1,20 @@
 package com.study8.mini.sys.service.impl;
 
-import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.entity.SysConfiguration;
 import com.study8.mini.sys.repository.SysConfigurationRepository;
 import com.study8.mini.sys.service.SysConfigurationService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * SysConfigurationServiceImpl
@@ -40,6 +43,16 @@ public class SysConfigurationServiceImpl
                 .filter(ObjectUtils::isNotEmpty)
                 .map(SysConfiguration::getValue)
                 .map(Integer::parseInt)
+                .orElse(null);
+    }
+
+    @Override
+    public Map<String, String> getMapConfig(String groupCode) {
+        Optional<List<SysConfiguration>> data = sysConfigurationRepository
+                .findByGroupCode(groupCode);
+        return data.map(sysConfigurations -> sysConfigurations
+                .stream()
+                .collect(Collectors.toMap(SysConfiguration::getCode, SysConfiguration::getValue)))
                 .orElse(null);
     }
 }

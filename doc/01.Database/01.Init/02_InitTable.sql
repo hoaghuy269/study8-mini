@@ -132,5 +132,48 @@ create table pm_process (
     deleted_id BIGINT
 );
 
+/**
+ * @Date: 2024-11-25
+ * @Author: HuyNH
+ * @Desc: process_id to VARCHAR(50)
+ */
+drop table if exists pm_process;
+create table pm_process (
+    id BIGSERIAL PRIMARY KEY,
+    business_id BIGINT,
+    process_id VARCHAR(50),
+    created_date TIMESTAMP NOT NULL,
+    created_id BIGINT,
+    updated_date TIMESTAMP,
+    updated_id BIGINT,
+    deleted_date TIMESTAMP,
+    deleted_id BIGINT
+);
+
+/**
+ * @Date: 2024-11-26
+ * @Author: HuyNH
+ * @Desc: Create table sys_otp
+ */
+drop table if exists sys_otp;
+CREATE TABLE sys_otp (
+    id BIGSERIAL PRIMARY KEY,
+    "type" varchar(30) NOT NULL,
+    user_id BIGINT NOT NULL,
+    code VARCHAR(50),
+    active BOOLEAN,
+    sent_date TIMESTAMP,
+    expiry_date TIMESTAMP NOT NULL,
+    verified BOOLEAN,
+    verified_date TIMESTAMP,
+    created_date TIMESTAMP NOT NULL,
+    created_id BIGINT,
+    updated_date TIMESTAMP,
+    updated_id BIGINT,
+    deleted_date TIMESTAMP,
+    deleted_id BIGINT
+
+);
+
 
 

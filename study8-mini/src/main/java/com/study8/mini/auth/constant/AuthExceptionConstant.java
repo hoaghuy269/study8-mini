@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthExceptionConstant {
     public static final String AUTH_EXCEPTION_EMAIL_EXISTS = "AUTH_EXCEPTION_EMAIL_EXISTS";
+    public static final String AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS = "AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS";
+    public static final String AUTH_EXCEPTION_ACCOUNT_HAS_BEEN_VERIFIED = "AUTH_EXCEPTION_ACCOUNT_HAS_BEEN_VERIFIED";
 }

@@ -19,6 +19,9 @@ import com.study8.mini.core.constant.CoreSystem;
 import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.ExceptionUtils;
 import com.study8.mini.core.util.UUIDUtils;
+import com.study8.mini.sys.dto.SysOtpDto;
+import com.study8.mini.sys.enumf.OtpTypeEnum;
+import com.study8.mini.sys.service.SysOtpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +67,9 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     @Autowired
     private AuthAccountValidator authAccountValidator;
 
+    @Autowired
+    private SysOtpService sysOtpService;
+
     @Override
     public UserPrincipal loadUserPrincipal(String username) {
         Optional<AuthAccount> account = authAccountRepository.findByUsername(username);
@@ -106,13 +112,15 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 }
             }
             case OTP -> {
-                if (dto.getId() == null) {
-                    ExceptionUtils.throwApplicationException(
-                            CoreException.EXCEPTION_DATA_PROCESSING, locale);
-                }
+                boolean isValidated = authAccountValidator.validateBeforeSendOTP(dto, locale);
+                if (isValidated) {
+                    SysOtpDto otp = sysOtpService.generateOTP(OtpTypeEnum.VERIFY_ACCOUNT, dto.getId());
 
+
+                }
             }
-            case UNKNOWN -> ExceptionUtils.throwApplicationException(CoreException.EXCEPTION_DATA_PROCESSING, locale);
+            case UNKNOWN -> ExceptionUtils.throwApplicationException(
+                    CoreException.EXCEPTION_DATA_PROCESSING, locale);
         }
 
         //Handle process
@@ -128,6 +136,13 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 AuthAccountDto.class)).orElse(null);
     }
 
+    @Override
+    public AuthAccountDto getById(Long id) {
+        Optional<AuthAccount> data = authAccountRepository.findData(id);
+        return data.map(authAccount -> objectMapper.convertValue(authAccount,
+                AuthAccountDto.class)).orElse(null);
+    }
+
     private void handleRegisterProcess(Long userId, CreateUserStepEnum step) {
         switch (step) {
             case CREATE -> {
@@ -138,7 +153,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 }
             }
             case OTP -> {
-                camundaService.completeTask("3", "Task_0dfv74n");
+//                camundaService.completeTask("3", "Task_0dfv74n");
             }
         }
     }

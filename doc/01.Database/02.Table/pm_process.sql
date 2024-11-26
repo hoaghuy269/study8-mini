@@ -8,7 +8,7 @@ drop table if exists pm_process;
 create table pm_process (
     id BIGSERIAL PRIMARY KEY,
     business_id BIGINT,
-    process_id VARCHAR(30),
+    process_id VARCHAR(50),
     created_date TIMESTAMP NOT NULL,
     created_id BIGINT,
     updated_date TIMESTAMP,

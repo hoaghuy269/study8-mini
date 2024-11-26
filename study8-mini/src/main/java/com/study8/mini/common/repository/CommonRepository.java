@@ -8,6 +8,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * CommonRepository
@@ -19,7 +20,7 @@ import java.util.List;
 public interface CommonRepository<E extends CommonEntity, D extends CommonDto>
         extends JpaRepository<E, Long> {
     @Query("SELECT e FROM #{#entityName} e "
-            + "WHERE e.id IN :idList "
+            + "WHERE e.id = :id "
             + "and coalesce(e.deletedId, 0) = 0")
-    List<E> findByListId(@Param("idList") List<Long> idList);
+    Optional<E> findData(@Param("id") Long id);
 }

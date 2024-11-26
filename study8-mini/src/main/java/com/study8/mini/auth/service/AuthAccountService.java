@@ -19,4 +19,6 @@ public interface AuthAccountService {
             throws ApplicationException;
 
     AuthAccountDto getByEmail(String email);
+
+    AuthAccountDto getById(Long id);
 }

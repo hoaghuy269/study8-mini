@@ -17,4 +17,9 @@ public class SysConstant {
     public static final String JWT = "JWT";
     public static final String JWT_SECRET = "JWT_SECRET";
     public static final String JWT_EXPIRATION = "JWT_EXPIRATION";
+    public static final String OTP = "OTP";
+    public static final String VERIFY_OTP_EXPIRATION = "VERIFY_OTP_EXPIRATION";
+    public static final String EMAIL = "EMAIL";
+    public static final String EMAIL_USERNAME = "EMAIL_USERNAME";
+    public static final String EMAIL_PASSWORD = "EMAIL_PASSWORD";
 }

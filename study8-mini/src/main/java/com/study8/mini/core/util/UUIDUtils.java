@@ -3,6 +3,7 @@ package com.study8.mini.core.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.security.SecureRandom;
 import java.util.UUID;
 
 /**
@@ -15,5 +16,11 @@ import java.util.UUID;
 public class UUIDUtils {
     public static String randomUUID() {
         return UUID.randomUUID().toString();
+    }
+
+    public static String randomOTP() {
+        SecureRandom random = new SecureRandom();
+        int otp = 100000 + random.nextInt(900000);
+        return String.valueOf(otp);
     }
 }

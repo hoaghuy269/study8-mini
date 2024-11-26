@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,4 +25,9 @@ public interface SysConfigurationRepository
             + "and coalesce(sc.deletedId, 0) = 0")
     Optional<SysConfiguration> findByGroupCodeAndCode(@Param("groupCode") String groupCode,
             @Param("code") String code);
+
+    @Query("select sc from SysConfiguration sc "
+            + "where sc.groupCode = :groupCode "
+            + "and coalesce(sc.deletedId, 0) = 0")
+    Optional<List<SysConfiguration>> findByGroupCode(@Param("groupCode") String groupCode);
 }
