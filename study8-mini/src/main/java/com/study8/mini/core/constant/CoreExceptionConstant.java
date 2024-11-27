@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
  * @Desc: CoreException
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CoreException {
+public class CoreExceptionConstant {
     public static final String EXCEPTION_DATA_PROCESSING = "EXCEPTION_DATA_PROCESSING";
 }

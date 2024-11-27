@@ -4,7 +4,7 @@ import com.study8.mini.auth.constant.AuthExceptionConstant;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.enumf.AccountStatusEnum;
 import com.study8.mini.auth.service.AuthAccountService;
-import com.study8.mini.core.constant.CoreException;
+import com.study8.mini.core.constant.CoreExceptionConstant;
 import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.ExceptionUtils;
 import com.study8.mini.sys.constant.SysExceptionConstant;
@@ -54,7 +54,7 @@ public class AuthAccountValidator {
             throws ApplicationException {
         if (data.getId() == null) {
             ExceptionUtils.throwApplicationException(
-                    CoreException.EXCEPTION_DATA_PROCESSING, locale);
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
         }
 
         AuthAccountDto dto = authAccountService.getById(data.getId());
@@ -64,7 +64,7 @@ public class AuthAccountValidator {
         }
         if (!StringUtils.equals(data.getEmail(), dto.getEmail())) {
             ExceptionUtils.throwApplicationException(
-                    CoreException.EXCEPTION_DATA_PROCESSING, locale);
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
         }
         if (!AccountStatusEnum.NOT_VERIFIED.getValue().equals(dto.getStatus())) {
             ExceptionUtils.throwApplicationException(

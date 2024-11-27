@@ -3,7 +3,7 @@ package com.study8.mini.sys.service.impl;
 import com.study8.mini.common.constant.CommonFileConstant;
 import com.study8.mini.common.constant.CommonSignConstant;
 import com.study8.mini.common.enumf.CommonLanguageEnum;
-import com.study8.mini.core.constant.CoreException;
+import com.study8.mini.core.constant.CoreExceptionConstant;
 import com.study8.mini.core.util.ResourceUtils;
 import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.dto.SendEmailDto;
@@ -11,13 +11,9 @@ import com.study8.mini.sys.dto.SendEmailResultDto;
 import com.study8.mini.sys.enumf.EmailTemplateEnum;
 import com.study8.mini.sys.service.EmailService;
 import com.study8.mini.sys.validator.EmailValidator;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,13 +21,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * EmailServiceImpl
@@ -107,7 +99,7 @@ public class EmailServiceImpl implements EmailService {
         } else {
             sendEmailResultDto.setIsSuccess(false);
             sendEmailResultDto.setErrorMessage(
-                    ResourceUtils.getMessage(CoreException.EXCEPTION_DATA_PROCESSING,
+                    ResourceUtils.getMessage(CoreExceptionConstant.EXCEPTION_DATA_PROCESSING,
                             locale));
             sendEmailResultDto.setTime(currentDate);
             return sendEmailResultDto;

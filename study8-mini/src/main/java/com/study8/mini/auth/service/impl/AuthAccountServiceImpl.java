@@ -17,7 +17,7 @@ import com.study8.mini.camunda.service.CamundaService;
 import com.study8.mini.common.constant.CommonDateTimeConstant;
 import com.study8.mini.common.enumf.CommonLanguageEnum;
 import com.study8.mini.configuration.security.UserPrincipal;
-import com.study8.mini.core.constant.CoreException;
+import com.study8.mini.core.constant.CoreExceptionConstant;
 import com.study8.mini.core.constant.CoreSystem;
 import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.DateTimeUtils;
@@ -173,7 +173,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 }
             }
             case UNKNOWN -> ExceptionUtils.throwApplicationException(
-                    CoreException.EXCEPTION_DATA_PROCESSING, locale);
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
         }
 
         //Handle process
