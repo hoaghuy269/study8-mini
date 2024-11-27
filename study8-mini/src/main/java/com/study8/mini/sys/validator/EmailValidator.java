@@ -16,8 +16,7 @@ public class EmailValidator {
     public boolean isDataValid(SendEmailDto sendEmailDto) {
         boolean result = true;
         if (CollectionUtils.isEmpty(sendEmailDto.getTo())
-                || StringUtils.isEmpty(sendEmailDto.getSubject())
-                || StringUtils.isEmpty(sendEmailDto.getTemplateCode())) {
+                || StringUtils.isEmpty(sendEmailDto.getSubject())) {
             result = false;
             return result;
         }

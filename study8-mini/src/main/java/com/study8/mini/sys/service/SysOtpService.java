@@ -11,4 +11,6 @@ import com.study8.mini.sys.enumf.OtpTypeEnum;
  */
 public interface SysOtpService {
     SysOtpDto generateOTP(OtpTypeEnum type, Long userId);
+
+    SysOtpDto getNewestOTP(Long userId);
 }

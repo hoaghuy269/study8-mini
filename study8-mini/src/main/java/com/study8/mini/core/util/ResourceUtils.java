@@ -1,5 +1,6 @@
 package com.study8.mini.core.util;
 
+import com.study8.mini.core.constant.CoreConstant;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ import java.util.ResourceBundle;
 public class ResourceUtils {
     public static String getMessage(String messageKey, Locale locale) {
         ResourceBundle messages = ResourceBundle.getBundle(
-                SysConstant.MESSAGES_SYS, locale);
+                CoreConstant.MESSAGES_SOURCE, locale);
         return messages.getString(messageKey);
     }
 

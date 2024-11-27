@@ -1,5 +1,6 @@
 package com.study8.mini.sys.dto;
 
+import com.study8.mini.sys.enumf.EmailTemplateEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 public class SendEmailDto {
-    private String templateCode;
+    private EmailTemplateEnum templateCode;
     private String subject;
     private List<String> to; //Not allow null
     private List<String> cc; //Allow null

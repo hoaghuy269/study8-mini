@@ -9,7 +9,7 @@ import lombok.Getter;
  * @Desc: CreateUserStepEnum
  */
 @Getter
-public enum CreateUserStepEnum {
+public enum AccountStepEnum {
     CREATE("CREATE"),
     OTP("OTP"),
     VERIFY("VERIFY"),
@@ -19,12 +19,12 @@ public enum CreateUserStepEnum {
 
     private final String value;
 
-    CreateUserStepEnum(String value) {
+    AccountStepEnum(String value) {
         this.value = value;
     }
 
-    public static CreateUserStepEnum resolveByValue(String value) {
-        for (CreateUserStepEnum enumValue : CreateUserStepEnum.values()) {
+    public static AccountStepEnum resolveByValue(String value) {
+        for (AccountStepEnum enumValue : AccountStepEnum.values()) {
             if (enumValue.value.equals(value)) {
                 return enumValue;
             }

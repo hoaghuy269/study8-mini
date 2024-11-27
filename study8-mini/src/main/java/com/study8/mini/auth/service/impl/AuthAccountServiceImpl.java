@@ -5,35 +5,48 @@ import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.dto.AuthRoleDto;
 import com.study8.mini.auth.entity.AuthAccount;
 import com.study8.mini.auth.enumf.AccountStatusEnum;
-import com.study8.mini.auth.enumf.CreateUserStepEnum;
+import com.study8.mini.auth.enumf.AccountStepEnum;
+import com.study8.mini.auth.enumf.RoleEnum;
 import com.study8.mini.auth.repository.AuthAccountRepository;
-import com.study8.mini.auth.validator.AuthAccountValidator;
-import com.study8.mini.pm.service.PmProcessService;
+import com.study8.mini.auth.service.AuthAccountRoleService;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.auth.service.AuthRoleService;
+import com.study8.mini.auth.validator.AuthAccountValidator;
 import com.study8.mini.camunda.constant.ProcessConstant;
 import com.study8.mini.camunda.service.CamundaService;
+import com.study8.mini.common.constant.CommonDateTimeConstant;
+import com.study8.mini.common.enumf.CommonLanguageEnum;
 import com.study8.mini.configuration.security.UserPrincipal;
 import com.study8.mini.core.constant.CoreException;
 import com.study8.mini.core.constant.CoreSystem;
 import com.study8.mini.core.exception.ApplicationException;
+import com.study8.mini.core.util.DateTimeUtils;
 import com.study8.mini.core.util.ExceptionUtils;
+import com.study8.mini.core.util.ResourceUtils;
 import com.study8.mini.core.util.UUIDUtils;
+import com.study8.mini.pm.service.PmProcessService;
+import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.dto.SendEmailDto;
+import com.study8.mini.sys.dto.SendEmailResultDto;
 import com.study8.mini.sys.dto.SysOtpDto;
+import com.study8.mini.sys.enumf.EmailTemplateEnum;
 import com.study8.mini.sys.enumf.OtpTypeEnum;
+import com.study8.mini.sys.service.EmailService;
 import com.study8.mini.sys.service.SysOtpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -59,9 +72,6 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     private CamundaService camundaService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private PmProcessService pmProcessService;
 
     @Autowired
@@ -69,6 +79,12 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 
     @Autowired
     private SysOtpService sysOtpService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private AuthAccountRoleService authAccountRoleService;
 
     @Override
     public UserPrincipal loadUserPrincipal(String username) {
@@ -93,30 +109,67 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         AuthAccount newEntity;
         LocalDateTime today = LocalDateTime.now();
 
-        CreateUserStepEnum step = CreateUserStepEnum.resolveByValue(dto.getStep());
+        AccountStepEnum step = AccountStepEnum.resolveByValue(dto.getStep());
         switch (step) {
             case CREATE -> {
                 boolean isValidated = authAccountValidator.validateBeforeRegister(dto, locale);
                 if (isValidated) {
-                    AuthAccount entity = new AuthAccount();
-                    entity.setEmail(dto.getEmail());
-                    entity.setCode(UUIDUtils.randomUUID());
-                    entity.setStatus(AccountStatusEnum.NOT_VERIFIED.getValue());
-                    entity.setCreatedDate(today);
-                    entity.setCreatedId(CoreSystem.SYSTEM_ID);
+                    AuthAccountDto data = this.getByEmail(dto.getEmail());
 
-                    //Do create account
-                    newEntity = authAccountRepository.save(entity);
+                    if (ObjectUtils.isEmpty(data)) {
+                        AuthAccount entity = new AuthAccount();
+                        entity.setEmail(dto.getEmail());
+                        entity.setCode(UUIDUtils.randomUUID());
+                        entity.setStatus(AccountStatusEnum.NOT_VERIFIED.getValue());
+                        entity.setCreatedDate(today);
+                        entity.setCreatedId(CoreSystem.SYSTEM_ID);
 
-                    result = objectMapper.convertValue(newEntity, AuthAccountDto.class);
+                        //Do create account
+                        newEntity = authAccountRepository.save(entity);
+
+                        //Do save role
+                        authAccountRoleService.saveRole(newEntity.getId(), RoleEnum.ROLE_VISITOR);
+
+                        result = objectMapper.convertValue(newEntity, AuthAccountDto.class);
+                    } else {
+                        result = data;
+                    }
                 }
             }
             case OTP -> {
                 boolean isValidated = authAccountValidator.validateBeforeSendOTP(dto, locale);
                 if (isValidated) {
+                    //Do generate OTP
                     SysOtpDto otp = sysOtpService.generateOTP(OtpTypeEnum.VERIFY_ACCOUNT, dto.getId());
 
+                    if (ObjectUtils.isNotEmpty(otp)) {
+                        SendEmailDto sendEmailDto = new SendEmailDto();
 
+                        sendEmailDto.setTo(Collections.singletonList(dto.getEmail()));
+                        sendEmailDto.setTemplateCode(EmailTemplateEnum.VERIFY_EMAIL);
+                        sendEmailDto.setSubject(ResourceUtils.getMessage(SysConstant.EMAIL_001_SUBJECT, locale));
+
+                        Map<String, Object> mapData = new HashMap<>();
+                        mapData.put("otpCode", otp.getCode());
+                        mapData.put("email", dto.getEmail());
+                        if (CommonLanguageEnum.VI.getValue().equals(locale.getLanguage())) {
+                            mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+                                    CommonDateTimeConstant.DATETIME_NO_SECOND));
+                        } else {
+                            mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+                                    CommonDateTimeConstant.DATETIME_NO_SECOND_US));
+                        }
+                        sendEmailDto.setMapData(mapData);
+
+                        //Do send email
+                        SendEmailResultDto sendEmailResultDto = emailService
+                                .sendEmailSMTP(sendEmailDto, locale);
+
+                        if (ObjectUtils.isNotEmpty(sendEmailResultDto)
+                                && sendEmailResultDto.getIsSuccess()) {
+                            result = dto;
+                        }
+                    }
                 }
             }
             case UNKNOWN -> ExceptionUtils.throwApplicationException(
@@ -124,7 +177,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         }
 
         //Handle process
-        this.handleRegisterProcess(result.getId(), step);
+//        this.handleRegisterProcess(result.getId(), step);
 
         return result;
     }
@@ -143,7 +196,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 AuthAccountDto.class)).orElse(null);
     }
 
-    private void handleRegisterProcess(Long userId, CreateUserStepEnum step) {
+    private void handleRegisterProcess(Long userId, AccountStepEnum step) {
         switch (step) {
             case CREATE -> {
                 ProcessInstance processInstance = camundaService.startProcess(ProcessConstant.PROCESS_REGISTER, userId);
@@ -153,7 +206,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 }
             }
             case OTP -> {
-//                camundaService.completeTask("3", "Task_0dfv74n");
+                camundaService.completeTask("3", "Task_0dfv74n");
             }
         }
     }
