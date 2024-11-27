@@ -198,6 +198,12 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                     }
                 }
             }
+            case SUBMIT -> {
+                boolean isValidated = authAccountValidator.validateBeforeSubmit(dto, locale);
+                if (isValidated) {
+
+                }
+            }
             case UNKNOWN -> ExceptionUtils.throwApplicationException(
                     CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
         }

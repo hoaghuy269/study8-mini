@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
  * @Desc: ErrorMessageConstant
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ErrorMessageConstant {
+public class RestExceptionConstant {
     public static final String EMAIL_CANT_BE_EMPTY = "EMAIL_CANT_BE_EMPTY";
     public static final String STEP_CANT_BE_EMPTY = "STEP_CANT_BE_EMPTY";
+    public static final String PASSWORD_NOT_FORMAT = "PASSWORD_NOT_FORMAT";
+    public static final String USERNAME_NOT_FORMAT = "USERNAME_NOT_FORMAT";
 }

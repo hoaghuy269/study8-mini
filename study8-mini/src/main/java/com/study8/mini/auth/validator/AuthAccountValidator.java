@@ -107,4 +107,19 @@ public class AuthAccountValidator {
 
         return true;
     }
+
+    public boolean validateBeforeSubmit(AuthAccountDto data, Locale locale)
+            throws ApplicationException {
+        if (data.getId() == null) {
+            ExceptionUtils.throwApplicationException(
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
+        }
+        AuthAccountDto dto = authAccountService.getById(data.getId());
+        if (ObjectUtils.isEmpty(dto)) {
+            ExceptionUtils.throwApplicationException(
+                    AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS, locale);
+        }
+
+        return true;
+    }
 }

@@ -31,6 +31,9 @@ public class AuthAccount extends CommonEntity {
     @Column(name = "username")
     private String username;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "code")
     private String code;
 
