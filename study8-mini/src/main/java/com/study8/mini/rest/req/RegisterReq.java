@@ -20,6 +20,8 @@ import lombok.Setter;
 public class RegisterReq {
     private Long id;
 
+    private String otp;
+
     @NotEmpty(message = ErrorMessageConstant.EMAIL_CANT_BE_EMPTY)
     @Pattern(regexp = CommonPatternConstant.EMAIL_PATTERN)
     private String email;

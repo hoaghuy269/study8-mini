@@ -1,9 +1,13 @@
 package com.study8.mini.sys.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.study8.mini.auth.constant.AuthExceptionConstant;
 import com.study8.mini.core.constant.CoreSystem;
+import com.study8.mini.core.exception.ApplicationException;
+import com.study8.mini.core.util.ExceptionUtils;
 import com.study8.mini.core.util.UUIDUtils;
 import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysExceptionConstant;
 import com.study8.mini.sys.dto.SysOtpDto;
 import com.study8.mini.sys.entity.SysOtp;
 import com.study8.mini.sys.enumf.OtpTypeEnum;
@@ -24,6 +28,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -89,6 +94,26 @@ public class SysOtpServiceImpl implements SysOtpService {
             return objectMapper.convertValue(result, SysOtpDto.class);
         }
         return null;
+    }
+
+    @Override
+    public boolean verifyOTP(String otp, Long userId, Locale locale) {
+        LocalDateTime today = LocalDateTime.now();
+
+        Optional<SysOtp> data = sysOtpRepository.findByCodeAndUserId(otp, userId);
+        if (data.isEmpty()) {
+            return false;
+        } else {
+            SysOtp entity = data.get();
+            entity.setActive(false);
+            entity.setVerified(true);
+            entity.setVerifiedDate(today);
+            entity.setDeletedId(CoreSystem.SYSTEM_ID);
+            entity.setDeletedDate(today);
+
+            sysOtpRepository.save(entity);
+        }
+        return true;
     }
 
     @Scheduled(fixedRate = 10800000) //Run every 3 hours

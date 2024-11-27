@@ -1,7 +1,10 @@
 package com.study8.mini.sys.service;
 
+import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.sys.dto.SysOtpDto;
 import com.study8.mini.sys.enumf.OtpTypeEnum;
+
+import java.util.Locale;
 
 /**
  * SysOtpService
@@ -13,4 +16,6 @@ public interface SysOtpService {
     SysOtpDto generateOTP(OtpTypeEnum type, Long userId);
 
     SysOtpDto getNewestOTP(Long userId);
+
+    boolean verifyOTP(String otp, Long userId, Locale locale);
 }

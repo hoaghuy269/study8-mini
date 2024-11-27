@@ -1,5 +1,6 @@
 package com.study8.mini.rest.v1.auth.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.common.rest.CommonApiResponse;
@@ -30,6 +31,9 @@ public class AuthApiRestImpl implements AuthApiRest {
     @Autowired
     private AuthAccountService authAccountService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public CommonApiResponse<LoginRes> login(LoginReq loginReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response) {
@@ -47,15 +51,13 @@ public class AuthApiRestImpl implements AuthApiRest {
                         bindingResult, locale);
             }
 
-            AuthAccountDto registerDto = new AuthAccountDto();
-            registerDto.setEmail(registerReq.getEmail());
-            registerDto.setStep(registerReq.getStep());
-            registerDto.setId(registerReq.getId());
-
+            AuthAccountDto registerDto = objectMapper.convertValue(registerReq, AuthAccountDto.class);
             AuthAccountDto dto = authAccountService.register(registerDto, locale);
 
             RegisterRes result = new RegisterRes();
             result.setUserId(dto.getId());
+            result.setEmail(dto.getEmail());
+
             return CommonApiResponse.handleSuccess(result, locale);
         } catch (Exception e) {
             log.error("AuthApiRestImpl | register", e);

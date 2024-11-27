@@ -24,5 +24,7 @@ public class AuthAccountDto extends CommonDto {
     private String password;
     private String status;
     private List<AuthRoleDto> roles;
+
     private String step;
+    private String otp;
 }

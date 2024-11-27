@@ -9,4 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RegisterRes {
     private Long userId;
+    private String email;
 }

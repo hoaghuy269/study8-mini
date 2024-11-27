@@ -35,4 +35,11 @@ public interface SysOtpRepository extends CommonRepository<SysOtp, SysOtpDto> {
             "AND so.expiryDate < :now " +
             "AND coalesce(so.deletedId, 0) = 0")
     Page<SysOtp> findExpiredOTP(@Param("now") LocalDateTime now, Pageable pageable);
+
+    @Query("SELECT so FROM SysOtp so " +
+            "WHERE so.active = true "
+            + "and so.code = :code "
+            + "and so.userId = :userId " +
+            "AND coalesce(so.deletedId, 0) = 0")
+    Optional<SysOtp> findByCodeAndUserId(@Param("code") String code, @Param("userId") Long userId);
 }

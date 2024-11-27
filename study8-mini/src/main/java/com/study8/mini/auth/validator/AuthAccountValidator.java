@@ -73,14 +73,36 @@ public class AuthAccountValidator {
 
         //Validate OTP
         SysOtpDto newestOTP = sysOtpService.getNewestOTP(data.getId());
-        LocalDateTime nextAllowed = newestOTP.getSendDate().plusSeconds(30);
-        LocalDateTime now = LocalDateTime.now();
-        if (ObjectUtils.isNotEmpty(newestOTP) && now.isBefore(nextAllowed)) {
-            String[] errors = new String[] {
-                    String.valueOf(Duration.between(now, nextAllowed).getSeconds())
-            };
+        if (ObjectUtils.isNotEmpty(newestOTP) && newestOTP.getSendDate() != null) {
+            LocalDateTime nextAllowed = newestOTP.getSendDate().plusSeconds(30);
+            LocalDateTime now = LocalDateTime.now();
+
+            if (now.isBefore(nextAllowed)) {
+                String[] errors = new String[] {
+                        String.valueOf(Duration.between(now, nextAllowed).getSeconds())
+                };
+                ExceptionUtils.throwApplicationException(
+                        SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_BEEN_SENT, locale, errors);
+            }
+        }
+
+        return true;
+    }
+
+    public boolean validateBeforeVerify(AuthAccountDto data, Locale locale)
+            throws ApplicationException {
+        if (data.getId() == null || StringUtils.isEmpty(data.getOtp())) {
             ExceptionUtils.throwApplicationException(
-                    SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_BEEN_SENT, locale, errors);
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
+        }
+        AuthAccountDto dto = authAccountService.getById(data.getId());
+        if (ObjectUtils.isEmpty(dto)) {
+            ExceptionUtils.throwApplicationException(
+                    AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS, locale);
+        }
+        if (!AccountStatusEnum.NOT_VERIFIED.getValue().equals(dto.getStatus())) {
+            ExceptionUtils.throwApplicationException(
+                    AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_HAS_BEEN_VERIFIED, locale);
         }
 
         return true;

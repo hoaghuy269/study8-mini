@@ -1,6 +1,7 @@
 package com.study8.mini.auth.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.study8.mini.auth.constant.AuthExceptionConstant;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.dto.AuthRoleDto;
 import com.study8.mini.auth.entity.AuthAccount;
@@ -26,6 +27,7 @@ import com.study8.mini.core.util.ResourceUtils;
 import com.study8.mini.core.util.UUIDUtils;
 import com.study8.mini.pm.service.PmProcessService;
 import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysExceptionConstant;
 import com.study8.mini.sys.dto.SendEmailDto;
 import com.study8.mini.sys.dto.SendEmailResultDto;
 import com.study8.mini.sys.dto.SysOtpDto;
@@ -107,6 +109,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
             throws ApplicationException {
         AuthAccountDto result = new AuthAccountDto();
         AuthAccount newEntity;
+
         LocalDateTime today = LocalDateTime.now();
 
         AccountStepEnum step = AccountStepEnum.resolveByValue(dto.getStep());
@@ -169,6 +172,30 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                                 && sendEmailResultDto.getIsSuccess()) {
                             result = dto;
                         }
+                    }
+                }
+            }
+            case VERIFY -> {
+                boolean isValidated = authAccountValidator.validateBeforeVerify(dto, locale);
+                if (isValidated) {
+                    //Verify OTP
+                    boolean isOtpValid = sysOtpService.verifyOTP(dto.getOtp(), dto.getId(), locale);
+                    if (!isOtpValid) {
+                        ExceptionUtils.throwApplicationException(
+                                SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_NOT_VALID, locale);
+                    }
+
+                    //Update account
+                    Optional<AuthAccount> data = authAccountRepository.findById(dto.getId());
+                    if (data.isPresent()) {
+                        AuthAccount entity = data.get();
+                        entity.setStatus(AccountStatusEnum.NO_INFO.getValue());
+                        entity.setUpdatedId(CoreSystem.SYSTEM_ID);
+                        entity.setUpdatedDate(today);
+
+                        //Do update
+                        authAccountRepository.save(entity);
+                        result = dto;
                     }
                 }
             }

@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SysExceptionConstant {
     public static final String SYS_EXCEPTION_OTP_HAS_BEEN_SENT = "SYS_EXCEPTION_OTP_HAS_BEEN_SENT";
+    public static final String SYS_EXCEPTION_OTP_HAS_NOT_VALID = "SYS_EXCEPTION_OTP_HAS_NOT_VALID";
 }
