@@ -37,3 +37,37 @@ INSERT INTO sys_configuration
 (group_code, code, value, created_date, created_id)
 VALUES('JWT', 'JWT_EXPIRATION', '1800000', current_timestamp, 1);
 
+/**
+ * sys_configuration
+ * @Date: 2024-11-20
+ * @Author: HuyNH
+ * @Desc: Add email 
+ */
+delete from sys_configuration WHERE code = 'EMAIL_USERNAME';
+INSERT INTO sys_configuration
+(group_code, code, value, created_date, created_id)
+VALUES('EMAIL', 'EMAIL_USERNAME', 'study8.it@gmail.com', current_timestamp, 1);
+
+delete from sys_configuration WHERE code = 'EMAIL_PASSWORD';
+INSERT INTO sys_configuration
+(group_code, code, value, created_date, created_id)
+VALUES('EMAIL', 'EMAIL_PASSWORD', '***', current_timestamp, 1);
+
+/**
+ * sys_configuration
+ * @Date: 2024-11-20
+ * @Author: HuyNH
+ * @Desc: Add pagination config
+ */
+delete from sys_configuration WHERE code = 'PAGE';
+INSERT INTO sys_configuration
+(group_code, code, value, created_date, created_id)
+VALUES('PAGINATION', 'PAGE', '0', current_timestamp, 1);
+
+delete from sys_configuration WHERE code = 'PAGE_SIZE';
+INSERT INTO sys_configuration
+(group_code, code, value, created_date, created_id)
+VALUES('PAGINATION', 'PAGE_SIZE', '50', current_timestamp, 1);
+
+
+
