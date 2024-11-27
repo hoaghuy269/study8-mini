@@ -1,13 +1,9 @@
 package com.study8.mini.sys.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.study8.mini.auth.constant.AuthExceptionConstant;
 import com.study8.mini.core.constant.CoreSystem;
-import com.study8.mini.core.exception.ApplicationException;
-import com.study8.mini.core.util.ExceptionUtils;
 import com.study8.mini.core.util.UUIDUtils;
 import com.study8.mini.sys.constant.SysConstant;
-import com.study8.mini.sys.constant.SysExceptionConstant;
 import com.study8.mini.sys.dto.SysOtpDto;
 import com.study8.mini.sys.entity.SysOtp;
 import com.study8.mini.sys.enumf.OtpTypeEnum;
@@ -15,7 +11,6 @@ import com.study8.mini.sys.repository.SysOtpRepository;
 import com.study8.mini.sys.service.SysConfigurationService;
 import com.study8.mini.sys.service.SysOtpService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,7 +1,6 @@
 package com.study8.mini.auth.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.study8.mini.auth.constant.AuthExceptionConstant;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.dto.AuthRoleDto;
 import com.study8.mini.auth.entity.AuthAccount;

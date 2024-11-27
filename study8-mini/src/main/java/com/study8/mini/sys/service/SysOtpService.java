@@ -1,6 +1,5 @@
 package com.study8.mini.sys.service;
 
-import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.sys.dto.SysOtpDto;
 import com.study8.mini.sys.enumf.OtpTypeEnum;
 
