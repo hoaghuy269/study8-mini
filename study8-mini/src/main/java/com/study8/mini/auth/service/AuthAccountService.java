@@ -21,4 +21,6 @@ public interface AuthAccountService {
     AuthAccountDto getByEmail(String email);
 
     AuthAccountDto getById(Long id);
+
+    AuthAccountDto getByUsername(String username);
 }

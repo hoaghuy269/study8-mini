@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -32,7 +33,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private JwtService jwtService;
 
     @Autowired
-    private AuthAccountService authAccountService;
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -57,7 +58,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 if (tokenValid) {
                     String username = jwtService.getUserNameFormToken(jwt);
 
-                    UserPrincipal userPrincipal = authAccountService.loadUserPrincipal(username);
+                    UserDetails userPrincipal = userService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     userPrincipal,

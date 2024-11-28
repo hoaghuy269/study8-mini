@@ -2,9 +2,11 @@ package com.study8.mini.common.rest;
 
 import com.study8.mini.common.constant.CommonStatusCodeConstant;
 import com.study8.mini.core.constant.CoreConstant;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
@@ -44,7 +46,7 @@ public class CommonApiResponse<T> {
         return response;
     }
 
-    public static <T> CommonApiResponse<T> handleError(String message) {
+    public static <T> CommonApiResponse<T> handleError(String message, HttpServletResponse httpServletResponse) {
         CommonApiResponse<T> response = new CommonApiResponse<>();
 
         response.setStatusCode(CommonStatusCodeConstant.BAD_REQUEST);
@@ -53,6 +55,9 @@ public class CommonApiResponse<T> {
         response.setErrorMessages(null);
         response.setTime(LocalDateTime.now());
         response.setData(null);
+
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
         return response;
     }

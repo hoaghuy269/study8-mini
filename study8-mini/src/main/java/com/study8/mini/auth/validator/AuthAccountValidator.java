@@ -3,6 +3,7 @@ package com.study8.mini.auth.validator;
 import com.study8.mini.auth.constant.AuthExceptionConstant;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.enumf.AccountStatusEnum;
+import com.study8.mini.auth.enumf.RoleEnum;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.core.constant.CoreExceptionConstant;
 import com.study8.mini.core.exception.ApplicationException;
@@ -106,7 +107,7 @@ public class AuthAccountValidator {
         }
 
         //Verify OTP
-        boolean isOtpValid = sysOtpService.verifyOTP(dto.getOtp(), dto.getId(), locale);
+        boolean isOtpValid = sysOtpService.verifyOTP(data.getOtp(), data.getId(), locale);
         if (!isOtpValid) {
             ExceptionUtils.throwApplicationException(
                     SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_NOT_VALID, locale);
@@ -125,6 +126,32 @@ public class AuthAccountValidator {
         if (ObjectUtils.isEmpty(dto)) {
             ExceptionUtils.throwApplicationException(
                     AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS, locale);
+        }
+        if (!AccountStatusEnum.NO_INFO.getValue().equals(dto.getStatus())) {
+            ExceptionUtils.throwApplicationException(
+                    AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_HAS_BEEN_VERIFIED, locale);
+        }
+
+        //Validate data
+        if (StringUtils.isEmpty(data.getPassword())
+                || StringUtils.isEmpty(data.getName())
+                || StringUtils.isEmpty(data.getRole())) {
+            ExceptionUtils.throwApplicationException(
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
+        }
+        RoleEnum roleEnum = RoleEnum.resolveByValue(data.getRole());
+        if (RoleEnum.UNKNOWN.equals(roleEnum)) {
+            ExceptionUtils.throwApplicationException(
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
+        }
+
+        //Validate username
+        if (StringUtils.isNotEmpty(data.getUsername())) {
+            AuthAccountDto dtoByUsername = authAccountService.getByUsername(data.getUsername());
+            if (ObjectUtils.isNotEmpty(dtoByUsername)) {
+                ExceptionUtils.throwApplicationException(
+                        AuthExceptionConstant.AUTH_EXCEPTION_USERNAME_EXISTS, locale);
+            }
         }
 
         return true;

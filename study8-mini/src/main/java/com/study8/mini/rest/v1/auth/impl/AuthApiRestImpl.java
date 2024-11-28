@@ -61,7 +61,7 @@ public class AuthApiRestImpl implements AuthApiRest {
             return CommonApiResponse.handleSuccess(result, locale);
         } catch (Exception e) {
             log.error("AuthApiRestImpl | register", e);
-            return CommonApiResponse.handleError(e.getMessage());
+            return CommonApiResponse.handleError(e.getMessage(), response);
         }
     }
 }

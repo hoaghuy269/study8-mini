@@ -38,6 +38,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +86,9 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 
     @Autowired
     private AuthAccountRoleService authAccountRoleService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserPrincipal loadUserPrincipal(String username) {
@@ -192,7 +196,23 @@ public class AuthAccountServiceImpl implements AuthAccountService {
             case SUBMIT -> {
                 boolean isValidated = authAccountValidator.validateBeforeSubmit(dto, locale);
                 if (isValidated) {
+                    Optional<AuthAccount> data = authAccountRepository.findById(dto.getId());
+                    if (data.isPresent()) {
+                        AuthAccount entity = data.get();
 
+                        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+                        entity.setName(dto.getName());
+                        entity.setUsername(dto.getUsername());
+                        entity.setStatus(AccountStatusEnum.ACTIVE.getValue());
+
+                        entity.setUpdatedDate(today);
+                        entity.setUpdatedId(CoreSystem.SYSTEM_ID);
+
+                        //Do update
+                        newEntity = authAccountRepository.save(entity);
+
+                        result = objectMapper.convertValue(newEntity, AuthAccountDto.class);
+                    }
                 }
             }
             case UNKNOWN -> ExceptionUtils.throwApplicationException(
@@ -215,6 +235,13 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     @Override
     public AuthAccountDto getById(Long id) {
         Optional<AuthAccount> data = authAccountRepository.findData(id);
+        return data.map(authAccount -> objectMapper.convertValue(authAccount,
+                AuthAccountDto.class)).orElse(null);
+    }
+
+    @Override
+    public AuthAccountDto getByUsername(String username) {
+        Optional<AuthAccount> data = authAccountRepository.findByUsername(username);
         return data.map(authAccount -> objectMapper.convertValue(authAccount,
                 AuthAccountDto.class)).orElse(null);
     }
