@@ -26,7 +26,6 @@ import com.study8.mini.core.util.ResourceUtils;
 import com.study8.mini.core.util.UUIDUtils;
 import com.study8.mini.pm.service.PmProcessService;
 import com.study8.mini.sys.constant.SysConstant;
-import com.study8.mini.sys.constant.SysExceptionConstant;
 import com.study8.mini.sys.dto.SendEmailDto;
 import com.study8.mini.sys.dto.SendEmailResultDto;
 import com.study8.mini.sys.dto.SysOtpDto;
@@ -177,14 +176,6 @@ public class AuthAccountServiceImpl implements AuthAccountService {
             case VERIFY -> {
                 boolean isValidated = authAccountValidator.validateBeforeVerify(dto, locale);
                 if (isValidated) {
-                    //Verify OTP
-                    boolean isOtpValid = sysOtpService.verifyOTP(dto.getOtp(), dto.getId(), locale);
-                    if (!isOtpValid) {
-                        ExceptionUtils.throwApplicationException(
-                                SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_NOT_VALID, locale);
-                    }
-
-                    //Update account
                     Optional<AuthAccount> data = authAccountRepository.findById(dto.getId());
                     if (data.isPresent()) {
                         AuthAccount entity = data.get();

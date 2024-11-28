@@ -105,6 +105,13 @@ public class AuthAccountValidator {
                     AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_HAS_BEEN_VERIFIED, locale);
         }
 
+        //Verify OTP
+        boolean isOtpValid = sysOtpService.verifyOTP(dto.getOtp(), dto.getId(), locale);
+        if (!isOtpValid) {
+            ExceptionUtils.throwApplicationException(
+                    SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_NOT_VALID, locale);
+        }
+
         return true;
     }
 
