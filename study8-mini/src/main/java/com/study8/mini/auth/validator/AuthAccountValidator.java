@@ -65,7 +65,7 @@ public class AuthAccountValidator {
         }
         if (!StringUtils.equals(data.getEmail(), dto.getEmail())) {
             ExceptionUtils.throwApplicationException(
-                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
+                    AuthExceptionConstant.AUTH_EXCEPTION_EMAIL_NOT_CORRECT, locale);
         }
         if (!AccountStatusEnum.NOT_VERIFIED.getValue().equals(dto.getStatus())) {
             ExceptionUtils.throwApplicationException(
@@ -104,6 +104,10 @@ public class AuthAccountValidator {
         if (!AccountStatusEnum.NOT_VERIFIED.getValue().equals(dto.getStatus())) {
             ExceptionUtils.throwApplicationException(
                     AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_HAS_BEEN_VERIFIED, locale);
+        }
+        if (!StringUtils.equals(data.getEmail(), dto.getEmail())) {
+            ExceptionUtils.throwApplicationException(
+                    AuthExceptionConstant.AUTH_EXCEPTION_EMAIL_NOT_CORRECT, locale);
         }
 
         //Verify OTP
