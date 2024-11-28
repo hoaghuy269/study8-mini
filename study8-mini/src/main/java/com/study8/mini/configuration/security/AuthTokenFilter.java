@@ -1,6 +1,5 @@
 package com.study8.mini.configuration.security;
 
-import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.sys.service.JwtService;
 import jakarta.servlet.FilterChain;
