@@ -65,9 +65,6 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @Autowired
-//    private CamundaService camundaService;
-
     @Autowired
     private PmProcessService pmProcessService;
 
