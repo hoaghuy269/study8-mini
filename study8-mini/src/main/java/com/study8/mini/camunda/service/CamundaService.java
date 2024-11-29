@@ -11,5 +11,5 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 public interface CamundaService {
     ProcessInstance startProcess(String processName, Long businessId);
 
-    void completeTask(String businessId, String taskDefinitionKey);
+    void completeTask(String processId, Long businessId, String taskDefinitionKey);
 }

@@ -16,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PmProcessDto extends CommonDto {
     private Long id;
+    private String code;
     private Long businessId;
     private String processId;
 }

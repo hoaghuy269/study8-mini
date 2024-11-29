@@ -12,7 +12,7 @@ import com.study8.mini.auth.service.AuthAccountRoleService;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.auth.service.AuthRoleService;
 import com.study8.mini.auth.validator.AuthAccountValidator;
-import com.study8.mini.camunda.constant.ProcessConstant;
+import com.study8.mini.camunda.constant.CamundaConstant;
 import com.study8.mini.camunda.service.CamundaService;
 import com.study8.mini.common.constant.CommonDateTimeConstant;
 import com.study8.mini.common.enumf.CommonLanguageEnum;
@@ -24,7 +24,10 @@ import com.study8.mini.core.util.DateTimeUtils;
 import com.study8.mini.core.util.ExceptionUtils;
 import com.study8.mini.core.util.ResourceUtils;
 import com.study8.mini.core.util.UUIDUtils;
+import com.study8.mini.pm.dto.PmProcessDto;
+import com.study8.mini.pm.enumf.ProcessCodeEnum;
 import com.study8.mini.pm.service.PmProcessService;
+import com.study8.mini.pm.step.ProcessRegisterStep;
 import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.dto.SendEmailDto;
 import com.study8.mini.sys.dto.SendEmailResultDto;
@@ -224,7 +227,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         }
 
         //Handle process
-//        this.handleRegisterProcess(result.getId(), step);
+        this.handleRegisterProcess(result.getId(), step);
 
         return result;
     }
@@ -253,14 +256,18 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     private void handleRegisterProcess(Long userId, AccountStepEnum step) {
         switch (step) {
             case CREATE -> {
-                ProcessInstance processInstance = camundaService.startProcess(ProcessConstant.PROCESS_REGISTER, userId);
+                ProcessInstance processInstance = camundaService.startProcess(CamundaConstant.PROCESS_REGISTER, userId);
                 if (ObjectUtils.isNotEmpty(processInstance)
                         && StringUtils.isNotEmpty(processInstance.getId())) {
-                    pmProcessService.saveProcess(userId, processInstance.getId(), null);
+                    pmProcessService.saveProcess(userId, processInstance.getId(), CoreSystem.SYSTEM_ID);
                 }
             }
             case OTP -> {
-                camundaService.completeTask("3", "Task_0dfv74n");
+                PmProcessDto pmProcessDto = pmProcessService.getProcess(userId, ProcessCodeEnum.PROCESS_REGISTER);
+                if (ObjectUtils.isNotEmpty(pmProcessDto)
+                        && StringUtils.isNotEmpty(pmProcessDto.getProcessId())) {
+                    camundaService.completeTask(pmProcessDto.getProcessId(), userId, ProcessRegisterStep.OTP);
+                }
             }
         }
     }

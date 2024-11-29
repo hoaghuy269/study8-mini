@@ -6,6 +6,7 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
+import org.camunda.bpm.spring.boot.starter.event.PostDeployEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,26 +33,15 @@ public class CamundaServiceImpl implements CamundaService {
     }
 
     @Override
-    public void completeTask(String businessId, String taskDefinitionKey) {
-        String processInstanceId = getProcessByBusinessId(Long.parseLong(businessId));
+    public void completeTask(String processId, Long businessId, String taskDefinitionKey) {
+        List<Task> tasks = taskService.createTaskQuery()
+                .processInstanceId(processId)
+                .taskDefinitionKey(taskDefinitionKey)
+                .list();
 
-        if (processInstanceId != null) {
-            List<Task> tasks = taskService.createTaskQuery()
-                    .processInstanceId(processInstanceId)
-                    .taskDefinitionKey(taskDefinitionKey)
-                    .list();
-
-            if (!tasks.isEmpty()) {
-                Task task = tasks.get(0);
-                taskService.complete(task.getId());
-            }
+        if (!tasks.isEmpty()) {
+            Task task = tasks.get(0);
+            taskService.complete(task.getId());
         }
-    }
-
-    public String getProcessByBusinessId(Long businessId) {
-        return runtimeService.createProcessInstanceQuery()
-                .processInstanceBusinessKey(businessId.toString())
-                .singleResult()
-                .getId();
     }
 }

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
  * @Desc: ProcessConstant
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ProcessConstant {
+public class CamundaConstant {
     public static final String PROCESS_REGISTER = "PROCESS_REGISTER";
 }

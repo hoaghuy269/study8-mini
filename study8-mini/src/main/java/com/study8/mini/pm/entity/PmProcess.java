@@ -28,6 +28,9 @@ public class PmProcess extends CommonEntity {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "code")
+    private String code;
+
     @Column(name = "business_id")
     private Long businessId;
 
