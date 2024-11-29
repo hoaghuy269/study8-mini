@@ -12,8 +12,6 @@ import com.study8.mini.auth.service.AuthAccountRoleService;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.auth.service.AuthRoleService;
 import com.study8.mini.auth.validator.AuthAccountValidator;
-import com.study8.mini.camunda.constant.CamundaConstant;
-import com.study8.mini.camunda.service.CamundaService;
 import com.study8.mini.common.constant.CommonDateTimeConstant;
 import com.study8.mini.common.enumf.CommonLanguageEnum;
 import com.study8.mini.configuration.security.UserPrincipal;
@@ -24,10 +22,7 @@ import com.study8.mini.core.util.DateTimeUtils;
 import com.study8.mini.core.util.ExceptionUtils;
 import com.study8.mini.core.util.ResourceUtils;
 import com.study8.mini.core.util.UUIDUtils;
-import com.study8.mini.pm.dto.PmProcessDto;
-import com.study8.mini.pm.enumf.ProcessCodeEnum;
 import com.study8.mini.pm.service.PmProcessService;
-import com.study8.mini.pm.step.ProcessRegisterStep;
 import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.dto.SendEmailDto;
 import com.study8.mini.sys.dto.SendEmailResultDto;
@@ -38,8 +33,6 @@ import com.study8.mini.sys.service.EmailService;
 import com.study8.mini.sys.service.SysOtpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -72,8 +65,8 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private CamundaService camundaService;
+//    @Autowired
+//    private CamundaService camundaService;
 
     @Autowired
     private PmProcessService pmProcessService;
@@ -227,7 +220,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         }
 
         //Handle process
-        this.handleRegisterProcess(result.getId(), step);
+//        this.handleRegisterProcess(result.getId(), step);
 
         return result;
     }
@@ -253,22 +246,22 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 AuthAccountDto.class)).orElse(null);
     }
 
-    private void handleRegisterProcess(Long userId, AccountStepEnum step) {
-        switch (step) {
-            case CREATE -> {
-                ProcessInstance processInstance = camundaService.startProcess(CamundaConstant.PROCESS_REGISTER, userId);
-                if (ObjectUtils.isNotEmpty(processInstance)
-                        && StringUtils.isNotEmpty(processInstance.getId())) {
-                    pmProcessService.saveProcess(userId, processInstance.getId(), CoreSystem.SYSTEM_ID);
-                }
-            }
-            case OTP -> {
-                PmProcessDto pmProcessDto = pmProcessService.getProcess(userId, ProcessCodeEnum.PROCESS_REGISTER);
-                if (ObjectUtils.isNotEmpty(pmProcessDto)
-                        && StringUtils.isNotEmpty(pmProcessDto.getProcessId())) {
-                    camundaService.completeTask(pmProcessDto.getProcessId(), userId, ProcessRegisterStep.OTP);
-                }
-            }
-        }
-    }
+//    private void handleRegisterProcess(Long userId, AccountStepEnum step) {
+//        switch (step) {
+//            case CREATE -> {
+//                ProcessInstance processInstance = camundaService.startProcess(CamundaConstant.PROCESS_REGISTER, userId);
+//                if (ObjectUtils.isNotEmpty(processInstance)
+//                        && StringUtils.isNotEmpty(processInstance.getId())) {
+//                    pmProcessService.saveProcess(userId, processInstance.getId(), CoreSystem.SYSTEM_ID);
+//                }
+//            }
+//            case OTP -> {
+//                PmProcessDto pmProcessDto = pmProcessService.getProcess(userId, ProcessCodeEnum.PROCESS_REGISTER);
+//                if (ObjectUtils.isNotEmpty(pmProcessDto)
+//                        && StringUtils.isNotEmpty(pmProcessDto.getProcessId())) {
+//                    camundaService.completeTask(pmProcessDto.getProcessId(), userId, ProcessRegisterStep.OTP);
+//                }
+//            }
+//        }
+//    }
 }
