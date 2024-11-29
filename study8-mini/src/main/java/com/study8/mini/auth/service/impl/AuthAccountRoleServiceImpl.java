@@ -5,11 +5,14 @@ import com.study8.mini.auth.enumf.RoleEnum;
 import com.study8.mini.auth.repository.AuthAccountRoleRepository;
 import com.study8.mini.auth.service.AuthAccountRoleService;
 import com.study8.mini.core.constant.CoreSystem;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * AuthAccountRoleServiceImpl
@@ -25,16 +28,33 @@ public class AuthAccountRoleServiceImpl implements AuthAccountRoleService {
 
     @Override
     public void saveRole(Long userId, RoleEnum role) {
-        //TODO: Update role
+        List<AuthAccountRole> dataList = authAccountRoleRepository.findByAccountId(userId)
+                .orElse(Collections.emptyList());
+        boolean isNewRole = true;
 
+        if (CollectionUtils.isNotEmpty(dataList)) {
+            for (AuthAccountRole data : dataList) {
+                if (data.getRoleId().equals(role.getId())) {
+                    isNewRole = false;
+                    break;
+                }
+                data.setDeletedId(CoreSystem.SYSTEM_ID);
+                data.setDeletedDate(LocalDateTime.now());
+            }
 
-        AuthAccountRole saveEntity = new AuthAccountRole();
-        saveEntity.setAccountId(userId);
-        saveEntity.setRoleId(role.getId());
-        saveEntity.setCreatedId(CoreSystem.SYSTEM_ID);
-        saveEntity.setCreatedDate(LocalDateTime.now());
+            authAccountRoleRepository.saveAll(dataList);
+        }
 
-        //Do save
-        authAccountRoleRepository.save(saveEntity);
+        if (isNewRole) {
+            AuthAccountRole saveEntity = new AuthAccountRole();
+            saveEntity.setAccountId(userId);
+            saveEntity.setRoleId(role.getId());
+            saveEntity.setCreatedId(CoreSystem.SYSTEM_ID);
+            saveEntity.setCreatedDate(LocalDateTime.now());
+
+            //Do save
+            authAccountRoleRepository.save(saveEntity);
+        }
     }
+
 }

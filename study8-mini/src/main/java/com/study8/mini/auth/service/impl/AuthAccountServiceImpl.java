@@ -212,8 +212,8 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                         newEntity = authAccountRepository.save(entity);
 
                         //Do update role
-                        //TODO: Handover
-                        authAccountRoleService.saveRole(newEntity.getId(), RoleEnum.ROLE_VISITOR);
+                        RoleEnum roleEnum = RoleEnum.resolveByValue(dto.getRole());
+                        authAccountRoleService.saveRole(newEntity.getId(), roleEnum);
 
                         result = objectMapper.convertValue(newEntity, AuthAccountDto.class);
                     }

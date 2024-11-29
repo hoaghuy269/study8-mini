@@ -3,6 +3,7 @@ package com.study8.mini.auth.repository;
 import com.study8.mini.auth.dto.AuthAccountRoleDto;
 import com.study8.mini.auth.entity.AuthAccountRole;
 import com.study8.mini.common.repository.CommonRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,8 @@ import java.util.Optional;
 @Repository
 public interface AuthAccountRoleRepository
         extends CommonRepository<AuthAccountRole, AuthAccountRoleDto> {
-    //TODO:@Query
+    @Query("select e from AuthAccountRole e "
+            + "where e.accountId = :accountId "
+            + "and coalesce(e.deletedId, 0) = 0")
     Optional<List<AuthAccountRole>> findByAccountId(@Param("accountId") Long accountId);
 }
