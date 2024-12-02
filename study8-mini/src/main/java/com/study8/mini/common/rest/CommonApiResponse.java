@@ -2,10 +2,15 @@ package com.study8.mini.common.rest;
 
 import com.study8.mini.common.constant.CommonStatusCodeConstant;
 import com.study8.mini.core.constant.CoreConstant;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -21,6 +26,7 @@ public class CommonApiResponse<T> {
     private int statusCode;
     private String title;
     private String message;
+    private List<String> errorMessages;
     private LocalDateTime time;
     private T data;
 
@@ -32,34 +38,25 @@ public class CommonApiResponse<T> {
         response.setStatusCode(CommonStatusCodeConstant.SUCCESS);
         response.setTitle(CommonStatusCodeConstant.MESSAGE_TILE_SUCCESS);
         response.setMessage(messages.getString(CommonStatusCodeConstant.MESSAGE_SUCCESS));
+        response.setErrorMessages(null);
         response.setTime(LocalDateTime.now());
         response.setData(data);
 
         return response;
     }
 
-    public static <T> CommonApiResponse<T> handleSuccess(T data, String title, String message, Locale locale) {
-        ResourceBundle messages = ResourceBundle.getBundle(
-                CoreConstant.MESSAGES_SOURCE, locale);
-        CommonApiResponse<T> response = new CommonApiResponse<>();
-
-        response.setStatusCode(CommonStatusCodeConstant.SUCCESS);
-        response.setTitle(messages.getString(title));
-        response.setMessage(messages.getString(message));
-        response.setTime(LocalDateTime.now());
-        response.setData(data);
-
-        return response;
-    }
-
-    public static <T> CommonApiResponse<T> handleError(String message) {
+    public static <T> CommonApiResponse<T> handleError(String message, HttpServletResponse httpServletResponse) {
         CommonApiResponse<T> response = new CommonApiResponse<>();
 
         response.setStatusCode(CommonStatusCodeConstant.BAD_REQUEST);
         response.setTitle(CommonStatusCodeConstant.MESSAGE_TITLE_BAD_REQUEST);
         response.setMessage(message);
+        response.setErrorMessages(null);
         response.setTime(LocalDateTime.now());
         response.setData(null);
+
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
         return response;
     }
@@ -70,8 +67,36 @@ public class CommonApiResponse<T> {
         response.setStatusCode(CommonStatusCodeConstant.UNAUTHORIZED);
         response.setTitle(CommonStatusCodeConstant.MESSAGE_TITLE_UNAUTHORIZED);
         response.setMessage(message);
+        response.setErrorMessages(null);
         response.setTime(LocalDateTime.now());
         response.setData(null);
+
+        return response;
+    }
+
+    public static <T> CommonApiResponse<T> handleBindingResult(BindingResult bindingResult, Locale locale) {
+        ResourceBundle messages = ResourceBundle.getBundle(
+                CoreConstant.MESSAGES_SOURCE, locale);
+        CommonApiResponse<T> response = new CommonApiResponse<>();
+
+        response.setStatusCode(CommonStatusCodeConstant.BAD_REQUEST);
+        response.setTitle(CommonStatusCodeConstant.MESSAGE_TITLE_BAD_REQUEST);
+        response.setMessage(messages.getString(CommonStatusCodeConstant.MESSAGE_BAD_REQUEST));
+        response.setTime(LocalDateTime.now());
+        response.setData(null);
+
+        List<String> errorMessages = bindingResult.getFieldErrors().stream()
+                .map(fieldError -> {
+                    String messageKey = fieldError.getDefaultMessage();
+                    if (StringUtils.isNotEmpty(messageKey)
+                            && messages.containsKey(messageKey)) {
+                        return messages.getString(messageKey);
+                    } else {
+                        return fieldError.getDefaultMessage();
+                    }
+                })
+                .toList();
+        response.setErrorMessages(errorMessages);
 
         return response;
     }

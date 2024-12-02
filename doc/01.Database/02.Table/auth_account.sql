@@ -7,8 +7,9 @@
 drop table if exists auth_account;
 create table auth_account (
     id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE,
     code VARCHAR(50) UNIQUE NOT NULL,
+    "name" VARCHAR(255),
     email VARCHAR(255) NOT NULL,
     "password" VARCHAR(255),
     status VARCHAR(10) NOT NULL,
