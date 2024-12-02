@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.camunda.common.rest.CommonApiResponse;
 import com.study8.camunda.common.util.LanguageUtils;
 import com.study8.camunda.dto.ProcessDto;
+import com.study8.camunda.rest.req.NextStepProcessReq;
 import com.study8.camunda.rest.req.StartProcessReq;
+import com.study8.camunda.rest.res.NextStepProcessRes;
 import com.study8.camunda.rest.res.StartProcessRes;
 import com.study8.camunda.rest.v1.ProcessRest;
 import com.study8.camunda.service.ProcessService;
@@ -50,7 +52,30 @@ public class ProcessRestImpl implements ProcessRest {
 
             return CommonApiResponse.handleSuccess(result, locale);
         } catch (Exception e) {
-            log.error("AuthApiRestImpl | register", e);
+            log.error("ProcessRestImpl | startProcess", e);
+            return CommonApiResponse.handleError(e.getMessage(), response);
+        }
+    }
+
+    @Override
+    public CommonApiResponse<NextStepProcessRes> nextStepProcess(NextStepProcessReq nextStepProcessReq,
+            BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
+        Locale locale = LanguageUtils.getLanguageFromHeader(request);
+        try {
+            if (bindingResult.hasErrors()) {
+                return CommonApiResponse.handleBindingResult(
+                        bindingResult, locale);
+            }
+
+            ProcessDto dto = objectMapper.convertValue(nextStepProcessReq, ProcessDto.class);
+
+            //Return result
+            ProcessDto resultDto = processService.nextStepProcess(dto);
+            NextStepProcessRes result = objectMapper.convertValue(resultDto, NextStepProcessRes.class);
+
+            return CommonApiResponse.handleSuccess(result, locale);
+        } catch (Exception e) {
+            log.error("ProcessRestImpl | nextStepProcess", e);
             return CommonApiResponse.handleError(e.getMessage(), response);
         }
     }

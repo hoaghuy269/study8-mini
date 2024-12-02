@@ -10,4 +10,6 @@ import com.study8.camunda.dto.ProcessDto;
  */
 public interface ProcessService {
     ProcessDto startProcess(ProcessDto dto);
+
+    ProcessDto nextStepProcess(ProcessDto dto);
 }

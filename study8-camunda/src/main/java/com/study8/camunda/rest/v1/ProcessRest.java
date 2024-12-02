@@ -3,7 +3,9 @@ package com.study8.camunda.rest.v1;
 import com.study8.camunda.common.constant.CommonApiConstant;
 import com.study8.camunda.common.rest.CommonApiResponse;
 import com.study8.camunda.constant.ApiConstant;
+import com.study8.camunda.rest.req.NextStepProcessReq;
 import com.study8.camunda.rest.req.StartProcessReq;
+import com.study8.camunda.rest.res.NextStepProcessRes;
 import com.study8.camunda.rest.res.StartProcessRes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,5 +31,15 @@ public interface ProcessRest {
      */
     @PostMapping(ApiConstant.API_START)
     CommonApiResponse<StartProcessRes> startProcess(@RequestBody @Valid StartProcessReq startProcessReq, BindingResult bindingResult,
+            HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * @API: /api/v1/start/process
+     * @Date: 2024-12-02
+     * @Author: HuyNH
+     * @Desc: API Start Process
+     */
+    @PostMapping(ApiConstant.API_NEXT)
+    CommonApiResponse<NextStepProcessRes> nextStepProcess(@RequestBody @Valid NextStepProcessReq nextStepProcessReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response);
 }

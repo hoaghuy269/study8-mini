@@ -32,4 +32,11 @@ public class ProcessServiceImpl implements ProcessService {
         }
         return null;
     }
+
+    @Override
+    public ProcessDto nextStepProcess(ProcessDto dto) {
+        String processInstanceId = dto.getProcessInstanceId();
+        String step = dto.getStepName();
+        return null;
+    }
 }

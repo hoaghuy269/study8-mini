@@ -1,21 +1,23 @@
-package com.study8.camunda.dto;
+package com.study8.camunda.rest.req;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * ProcessDto
+ * NextStepProcessReq
  * @Date: 2024-12-02
  * @Author: HuyNH
- * @Desc: ProcessDto
+ * @Desc: NextStepProcessReq
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProcessDto {
+public class NextStepProcessReq {
+    @NotEmpty
     private String processInstanceId;
-    private String processCode;
-    private String businessId;
+
+    @NotEmpty
     private String stepName;
 }
