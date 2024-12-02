@@ -9,5 +9,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+camunda:
+  bpm:
+    admin-user:
+      id: ${CAMUNDA_USERNAME}
+      password: ${CAMUNDA_PASSWORD}
+    filter:
+      create: All tasks
 server:
   port: 8090

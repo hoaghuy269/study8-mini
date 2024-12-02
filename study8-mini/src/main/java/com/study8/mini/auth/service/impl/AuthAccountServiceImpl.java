@@ -217,7 +217,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         }
 
         //Handle process
-//        this.handleRegisterProcess(result.getId(), step);
+        this.handleRegisterProcess(result.getId(), step);
 
         return result;
     }
@@ -243,22 +243,14 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 AuthAccountDto.class)).orElse(null);
     }
 
-//    private void handleRegisterProcess(Long userId, AccountStepEnum step) {
-//        switch (step) {
-//            case CREATE -> {
-//                ProcessInstance processInstance = camundaService.startProcess(CamundaConstant.PROCESS_REGISTER, userId);
-//                if (ObjectUtils.isNotEmpty(processInstance)
-//                        && StringUtils.isNotEmpty(processInstance.getId())) {
-//                    pmProcessService.saveProcess(userId, processInstance.getId(), CoreSystem.SYSTEM_ID);
-//                }
-//            }
-//            case OTP -> {
-//                PmProcessDto pmProcessDto = pmProcessService.getProcess(userId, ProcessCodeEnum.PROCESS_REGISTER);
-//                if (ObjectUtils.isNotEmpty(pmProcessDto)
-//                        && StringUtils.isNotEmpty(pmProcessDto.getProcessId())) {
-//                    camundaService.completeTask(pmProcessDto.getProcessId(), userId, ProcessRegisterStep.OTP);
-//                }
-//            }
-//        }
-//    }
+    private void handleRegisterProcess(Long userId, AccountStepEnum step) {
+        switch (step) {
+            case CREATE -> {
+
+            }
+            case OTP -> {
+
+            }
+        }
+    }
 }

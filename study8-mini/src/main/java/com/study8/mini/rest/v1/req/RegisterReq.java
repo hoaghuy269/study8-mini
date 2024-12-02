@@ -1,4 +1,4 @@
-package com.study8.mini.rest.req;
+package com.study8.mini.rest.v1.req;
 
 import com.study8.mini.common.constant.CommonPatternConstant;
 import com.study8.mini.rest.constant.RestExceptionConstant;

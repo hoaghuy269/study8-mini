@@ -5,11 +5,11 @@ import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.common.rest.CommonApiResponse;
 import com.study8.mini.core.util.LanguageUtils;
-import com.study8.mini.rest.req.LoginReq;
-import com.study8.mini.rest.req.RegisterReq;
-import com.study8.mini.rest.res.LoginRes;
-import com.study8.mini.rest.res.RegisterRes;
-import com.study8.mini.rest.v1.auth.AuthApiRest;
+import com.study8.mini.rest.v1.req.LoginReq;
+import com.study8.mini.rest.v1.req.RegisterReq;
+import com.study8.mini.rest.v1.res.LoginRes;
+import com.study8.mini.rest.v1.res.RegisterRes;
+import com.study8.mini.rest.v1.auth.AuthRest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.Locale;
  */
 @RestController
 @Slf4j
-public class AuthApiRestImpl implements AuthApiRest {
+public class AuthRestImpl implements AuthRest {
     @Autowired
     private AuthAccountService authAccountService;
 
