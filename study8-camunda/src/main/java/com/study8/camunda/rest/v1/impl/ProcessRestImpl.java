@@ -1,13 +1,17 @@
 package com.study8.camunda.rest.v1.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.camunda.common.rest.CommonApiResponse;
 import com.study8.camunda.common.util.LanguageUtils;
+import com.study8.camunda.dto.ProcessDto;
 import com.study8.camunda.rest.req.StartProcessReq;
 import com.study8.camunda.rest.res.StartProcessRes;
 import com.study8.camunda.rest.v1.ProcessRest;
+import com.study8.camunda.service.ProcessService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +26,12 @@ import java.util.Locale;
 @RestController
 @Slf4j
 public class ProcessRestImpl implements ProcessRest {
+    @Autowired
+    private ProcessService processService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public CommonApiResponse<StartProcessRes> startProcess(StartProcessReq startProcessReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response) {
@@ -32,7 +42,11 @@ public class ProcessRestImpl implements ProcessRest {
                         bindingResult, locale);
             }
 
-            StartProcessRes result = new StartProcessRes();
+            ProcessDto dto = objectMapper.convertValue(startProcessReq, ProcessDto.class);
+
+            //Return result
+            ProcessDto resultDto = processService.startProcess(dto);
+            StartProcessRes result = objectMapper.convertValue(resultDto, StartProcessRes.class);
 
             return CommonApiResponse.handleSuccess(result, locale);
         } catch (Exception e) {

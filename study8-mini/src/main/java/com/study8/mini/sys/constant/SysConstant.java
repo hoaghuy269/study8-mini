@@ -27,4 +27,8 @@ public class SysConstant {
     public static final String PAGINATION = "PAGINATION";
     public static final String PAGE = "PAGE";
     public static final String PAGE_SIZE = "PAGE_SIZE";
+    public static final String CAMUNDA = "CAMUNDA";
+    public static final String CAMUNDA_ENABLE = "CAMUNDA_ENABLE";
+    public static final String CAMUNDA_URL = "CAMUNDA_URL";
+    public static final String CAMUNDA_START_PROCESS_URL = "CAMUNDA_START_PROCESS_URL";
 }

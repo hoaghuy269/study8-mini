@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 public enum ProcessCodeEnum {
-    PROCESS_REGISTER("PROCESS_REGISTER_v1.1"),
+    PROCESS_REGISTER("PROCESS_REGISTER"),
     UNKNOWN("UNKNOWN")
     ;
 

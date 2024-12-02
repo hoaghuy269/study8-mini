@@ -10,7 +10,9 @@ import com.study8.mini.pm.enumf.ProcessCodeEnum;
  * @Desc: PmProcessService
  */
 public interface PmProcessService {
-    void saveProcess(Long businessId, String processInstanceId, Long createdId);
+    void startProcess(ProcessCodeEnum processCode, Long businessId);
 
-    PmProcessDto getProcess(Long businessId, ProcessCodeEnum process);
+    void nextStepProcess(String processInstanceId, String stepName);
+
+    PmProcessDto getProcess(ProcessCodeEnum processCode, Long businessId);
 }

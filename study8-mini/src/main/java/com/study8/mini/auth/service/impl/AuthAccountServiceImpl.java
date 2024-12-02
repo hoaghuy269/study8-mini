@@ -22,7 +22,10 @@ import com.study8.mini.core.util.DateTimeUtils;
 import com.study8.mini.core.util.ExceptionUtils;
 import com.study8.mini.core.util.ResourceUtils;
 import com.study8.mini.core.util.UUIDUtils;
+import com.study8.mini.pm.dto.PmProcessDto;
+import com.study8.mini.pm.enumf.ProcessCodeEnum;
 import com.study8.mini.pm.service.PmProcessService;
+import com.study8.mini.pm.step.ProcessRegisterStep;
 import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.dto.SendEmailDto;
 import com.study8.mini.sys.dto.SendEmailResultDto;
@@ -243,13 +246,14 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 AuthAccountDto.class)).orElse(null);
     }
 
-    private void handleRegisterProcess(Long userId, AccountStepEnum step) {
+    private void handleRegisterProcess(Long businessId, AccountStepEnum step) {
+        PmProcessDto pmProcessDto = pmProcessService.getProcess(ProcessCodeEnum.PROCESS_REGISTER, businessId);
         switch (step) {
-            case CREATE -> {
-
-            }
+            case CREATE -> pmProcessService.startProcess(ProcessCodeEnum.PROCESS_REGISTER, businessId);
             case OTP -> {
-
+                if (ObjectUtils.isNotEmpty(pmProcessDto)) {
+                    pmProcessService.nextStepProcess(pmProcessDto.getProcessId(), ProcessRegisterStep.OTP);
+                }
             }
         }
     }

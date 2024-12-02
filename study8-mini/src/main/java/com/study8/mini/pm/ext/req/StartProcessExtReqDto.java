@@ -1,23 +1,19 @@
-package com.study8.camunda.rest.req;
+package com.study8.mini.pm.ext.req;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * StartProcessReq
+ * StartProcessExtReqDto
  * @Date: 2024-12-02
  * @Author: HuyNH
- * @Desc: StartProcessReq
+ * @Desc: StartProcessExtReqDto
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class StartProcessReq {
-    @NotEmpty
+public class StartProcessExtReqDto {
     private String processCode;
-
-    @NotEmpty
     private String businessId;
 }
