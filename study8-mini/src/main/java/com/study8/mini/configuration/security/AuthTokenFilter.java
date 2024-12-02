@@ -39,17 +39,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        //No filter
-        String uri = request.getRequestURI();
-        List<String> acceptUriPatterns = List.of(SecurityConstant.CAMUNDA_URL, SecurityConstant.AUTH_URL);
-
-        AntPathMatcher pathMatcher = new AntPathMatcher();
-        boolean isExcluded = acceptUriPatterns.stream().anyMatch(pattern -> pathMatcher.match(pattern, uri));
-        if (isExcluded) {
-            filterChain.doFilter(request, response);
-        }
-
-        //Do filter
         try {
             String jwt = jwtService.parseJwt(request);
             if (StringUtils.isNotEmpty(jwt)) {

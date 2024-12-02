@@ -14,6 +14,5 @@ import lombok.NoArgsConstructor;
 public class SecurityConstant {
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
-    public static final String CAMUNDA_URL = RestApiConstant.API_CAMUNDA + RestApiConstant.API_ALL;
     public static final String AUTH_URL = RestApiConstant.API_AUTH + RestApiConstant.API_ALL;
 }
