@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @Author: HuyNH
  * @Desc: API Authentication
  */
-@RequestMapping(RestApiConstant.API_AUTH + CommonApiConstant.API_V1)
+@RequestMapping(CommonApiConstant.API_V1 + RestApiConstant.API_AUTH)
 public interface AuthRest {
     /**
      * @API: /auth/api/v1/login
