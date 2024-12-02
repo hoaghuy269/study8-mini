@@ -23,4 +23,6 @@ public class CommonConstant {
     public static final String MESSAGE_SUCCESS = "MESSAGE_SUCCESS";
     public static final String MESSAGE_BAD_REQUEST = "MESSAGE_BAD_REQUEST";
     public static final String ACCEPT_LANGUAGE = "Accept-Language";
+    public static final String VI = "vi";
+    public static final String EN = "en";
 }
