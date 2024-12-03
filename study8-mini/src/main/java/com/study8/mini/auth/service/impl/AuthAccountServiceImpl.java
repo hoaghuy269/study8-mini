@@ -252,7 +252,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
             case CREATE -> pmProcessService.startProcess(ProcessCodeEnum.PROCESS_REGISTER, businessId);
             case OTP -> {
                 if (ObjectUtils.isNotEmpty(pmProcessDto)) {
-                    pmProcessService.nextStepProcess(pmProcessDto.getProcessId(), ProcessRegisterStep.OTP);
+                    pmProcessService.completeTask(pmProcessDto.getProcessId(), ProcessRegisterStep.OTP);
                 }
             }
         }

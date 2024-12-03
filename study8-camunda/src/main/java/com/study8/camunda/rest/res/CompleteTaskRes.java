@@ -13,6 +13,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NextStepProcessRes {
+public class CompleteTaskRes {
     private String processInstanceId;
 }

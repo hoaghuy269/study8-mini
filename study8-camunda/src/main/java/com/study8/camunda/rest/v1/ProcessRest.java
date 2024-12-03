@@ -3,9 +3,9 @@ package com.study8.camunda.rest.v1;
 import com.study8.camunda.common.constant.CommonApiConstant;
 import com.study8.camunda.common.rest.CommonApiResponse;
 import com.study8.camunda.constant.ApiConstant;
-import com.study8.camunda.rest.req.NextStepProcessReq;
+import com.study8.camunda.rest.req.CompleteTaskReq;
 import com.study8.camunda.rest.req.StartProcessReq;
-import com.study8.camunda.rest.res.NextStepProcessRes;
+import com.study8.camunda.rest.res.CompleteTaskRes;
 import com.study8.camunda.rest.res.StartProcessRes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(CommonApiConstant.API_V1 + ApiConstant.API_PROCESS)
 public interface ProcessRest {
     /**
-     * @API: /api/v1/start/process
+     * @API: /api/v1/process/start
      * @Date: 2024-12-02
      * @Author: HuyNH
      * @Desc: API Start Process
@@ -34,12 +34,12 @@ public interface ProcessRest {
             HttpServletRequest request, HttpServletResponse response);
 
     /**
-     * @API: /api/v1/start/process
+     * @API: /api/v1/process/next
      * @Date: 2024-12-02
      * @Author: HuyNH
-     * @Desc: API Start Process
+     * @Desc: API Complete Task
      */
-    @PostMapping(ApiConstant.API_NEXT)
-    CommonApiResponse<NextStepProcessRes> nextStepProcess(@RequestBody @Valid NextStepProcessReq nextStepProcessReq, BindingResult bindingResult,
+    @PostMapping(ApiConstant.API_COMPLETE_TASK)
+    CommonApiResponse<CompleteTaskRes> completeTask(@RequestBody @Valid CompleteTaskReq completeTaskReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response);
 }

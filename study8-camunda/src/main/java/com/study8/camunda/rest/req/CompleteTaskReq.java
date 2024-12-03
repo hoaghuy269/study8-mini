@@ -14,10 +14,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NextStepProcessReq {
+public class CompleteTaskReq {
     @NotEmpty
     private String processInstanceId;
 
     @NotEmpty
-    private String stepName;
+    private String stepCode;
 }

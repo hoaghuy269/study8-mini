@@ -4,10 +4,14 @@ import com.study8.camunda.dto.ProcessDto;
 import com.study8.camunda.service.ProcessService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * ProcessServiceImpl
@@ -20,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProcessServiceImpl implements ProcessService {
     @Autowired
     private RuntimeService runtimeService;
+
+    @Autowired
+    private TaskService taskService;
 
     @Override
     public ProcessDto startProcess(ProcessDto dto) {
@@ -34,9 +41,20 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
-    public ProcessDto nextStepProcess(ProcessDto dto) {
+    public ProcessDto completeTask(ProcessDto dto) {
         String processInstanceId = dto.getProcessInstanceId();
         String step = dto.getStepName();
-        return null;
+
+        List<Task> tasks = taskService.createTaskQuery()
+                .processInstanceId(processInstanceId)
+                .taskDefinitionKey(step)
+                .list();
+
+        if (!tasks.isEmpty()) {
+            Task task = tasks.get(0);
+            taskService.complete(task.getId());
+        }
+
+        return dto;
     }
 }

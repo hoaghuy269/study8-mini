@@ -12,7 +12,7 @@ import com.study8.mini.pm.enumf.ProcessCodeEnum;
 public interface PmProcessService {
     void startProcess(ProcessCodeEnum processCode, Long businessId);
 
-    void nextStepProcess(String processInstanceId, String stepName);
+    void completeTask(String processInstanceId, String stepName);
 
     PmProcessDto getProcess(ProcessCodeEnum processCode, Long businessId);
 }

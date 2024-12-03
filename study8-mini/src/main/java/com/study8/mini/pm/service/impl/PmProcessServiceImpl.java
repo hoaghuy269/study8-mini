@@ -78,7 +78,7 @@ public class PmProcessServiceImpl implements PmProcessService {
     }
 
     @Override
-    public void nextStepProcess(String processInstanceId, String stepName) {
+    public void completeTask(String processInstanceId, String stepName) {
 
     }
 

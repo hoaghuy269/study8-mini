@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class ApiConstant {
     public static final String API_PROCESS = "/process";
     public static final String API_START = "/start";
-    public static final String API_NEXT = "/next";
+    public static final String API_COMPLETE_TASK = "/complete-task";
 
 }
