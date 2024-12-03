@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * UserAuthenticationToken
@@ -22,4 +23,17 @@ public class UserAuthenticationToken extends UsernamePasswordAuthenticationToken
         this.locale = locale;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserAuthenticationToken that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(locale, that.locale);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), locale);
+    }
 }
+

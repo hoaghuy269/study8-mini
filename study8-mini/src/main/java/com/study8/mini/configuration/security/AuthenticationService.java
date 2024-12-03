@@ -71,6 +71,8 @@ public class AuthenticationService implements AuthenticationManager {
                 String message = ResourceUtils.getMessage(SecurityExceptionConstant.SECURITY_EXCEPTION_ACCOUNT_NO_INFO, locale);
                 throw new BadCredentialsException(message);
             }
+            default -> {
+            }
         }
 
         //Check password
