@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -129,7 +130,7 @@ public class PmProcessServiceImpl implements PmProcessService {
         Map<String, String> camundaConfig = sysConfigurationService.getMapConfig(SysConstant.CAMUNDA);
         if (MapUtils.isEmpty(camundaConfig)) {
             log.error("PmProcessServiceImpl | getCamundaConfig | Not found configuration of Camunda");
-            return null;
+            return Collections.emptyMap();
         }
         return camundaConfig;
     }
