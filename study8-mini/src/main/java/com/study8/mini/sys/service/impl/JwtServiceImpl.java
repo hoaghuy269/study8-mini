@@ -101,6 +101,18 @@ public class JwtServiceImpl implements JwtService {
         return false;
     }
 
+    @Override
+    public void blackListToken(String token) {
+        try {
+            Cache cache = cacheManager.getCache(SysConstant.BLACK_LIST_TOKEN);
+            if (ObjectUtils.isNotEmpty(cache)) {
+                cache.put(SysConstant.BLACK_LIST_TOKEN, token);
+            }
+        } catch (Exception e) {
+            log.error("JwtServiceImpl | blackListToken", e);
+        }
+    }
+
     private SecretKey getSecretKey() {
         try {
             String jwtSecret;

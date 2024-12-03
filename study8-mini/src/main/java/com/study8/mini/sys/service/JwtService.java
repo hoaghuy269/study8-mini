@@ -11,4 +11,6 @@ public interface JwtService {
     String getUserNameFormToken(String token);
 
     boolean validateToken(String authToken);
+
+    void blackListToken(String token);
 }
