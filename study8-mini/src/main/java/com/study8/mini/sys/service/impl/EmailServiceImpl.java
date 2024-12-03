@@ -66,29 +66,11 @@ public class EmailServiceImpl implements EmailService {
 
                 //Do send mail
                 javaMailSender.send(mimeMessage);
-
-                //Save Log
-//                this.saveLog(mimeMessage,
-//                        sendEmailDto.getTemplateCode(),
-//                        content,
-//                        currentDate,
-//                        true,
-//                        "SUCCESS"
-//                );
             } catch (Exception e) {
                 log.error("EmailServiceImpl | sendEmailSMTP", e);
                 sendEmailResultDto.setIsSuccess(false);
                 sendEmailResultDto.setErrorMessage(e.getMessage());
                 sendEmailResultDto.setTime(currentDate);
-
-                //Save Log
-//                this.saveLog(mimeMessage,
-//                        sendEmailDto.getTemplateCode(),
-//                        null,
-//                        currentDate,
-//                        false,
-//                        e.getMessage()
-//                );
 
                 return sendEmailResultDto;
             }
@@ -122,82 +104,4 @@ public class EmailServiceImpl implements EmailService {
         return stringSubstitutor
                 .replace(htmlTemplate);
     }
-
-//    private void saveLog(MimeMessage mimeMessage,
-//            String templateCode,
-//            String content,
-//            LocalDateTime currentDate,
-//            boolean isSuccess,
-//            String message) {
-//        SystemEmailLogDto systemEmailLogDto = new SystemEmailLogDto();
-//
-//        try {
-//            String ipAddress = InetAddress.getLocalHost().getHostAddress();
-//            systemEmailLogDto.setEmailServerIp(StringUtils.isNotEmpty(ipAddress)
-//                    ? ipAddress
-//                    : null);
-//        } catch (UnknownHostException e) {
-//            log.error("EmailServiceImpl | saveLog", e);
-//        }
-//
-//
-//        //Get config
-//        systemEmailLogDto.setEmailServer(mailConfig.getEmailServer());
-//        systemEmailLogDto.setEmailHost(mailConfig.getMailHost());
-//        systemEmailLogDto.setEmailPort(mailConfig.getMailPort());
-//
-//        try {
-//            //To
-//            Address[] recipientArrayTo = mimeMessage
-//                    .getRecipients(MimeMessage.RecipientType.TO);
-//            if (ArrayUtils.isNotEmpty(recipientArrayTo)) {
-//                systemEmailLogDto.setEmailTo(this
-//                        .convertAddressesToString(
-//                                recipientArrayTo));
-//            }
-//
-//            //Cc
-//            Address[] recipientArrayCc = mimeMessage
-//                    .getRecipients(MimeMessage.RecipientType.CC);
-//            if (ArrayUtils.isNotEmpty(recipientArrayCc)) {
-//                systemEmailLogDto.setEmailCc(this
-//                        .convertAddressesToString(
-//                                recipientArrayCc));
-//            }
-//
-//            //Bcc
-//            Address[] recipientArrayBcc = mimeMessage
-//                    .getRecipients(MimeMessage.RecipientType.BCC);
-//            if (ArrayUtils.isNotEmpty(recipientArrayBcc)) {
-//                systemEmailLogDto.setEmailBcc(this
-//                        .convertAddressesToString(
-//                                recipientArrayBcc));
-//            }
-//
-//            //Subject
-//            systemEmailLogDto.setEmailSubject(mimeMessage.getSubject());
-//        } catch (MessagingException e) {
-//            log.error("EmailServiceImpl | saveLog", e);
-//        }
-//
-//
-//        systemEmailLogDto.setEmailTemplateCode(templateCode);
-//        systemEmailLogDto.setEmailContent(content);
-//        systemEmailLogDto.setSentDate(currentDate);
-//        systemEmailLogDto.setSystemLog(message);
-//
-//        if (isSuccess) {
-//            systemEmailLogDto.setSentStatus(200);
-//        } else {
-//            systemEmailLogDto.setSentStatus(400);
-//        }
-//
-//        systemEmailLogService.saveLog(systemEmailLogDto, SettingVariable.SYSTEM_ADMIN_ID);
-//    }
-//
-//    private String convertAddressesToString(Address[] addresses) {
-//        return Arrays.stream(addresses)
-//                .map(address -> ((InternetAddress) address).getAddress())
-//                .collect(Collectors.joining(", "));
-//    }
 }
