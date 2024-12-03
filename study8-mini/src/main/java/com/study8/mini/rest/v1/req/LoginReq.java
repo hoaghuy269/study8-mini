@@ -1,4 +1,4 @@
-package com.study8.mini.rest.v1.auth.req;
+package com.study8.mini.rest.v1.req;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

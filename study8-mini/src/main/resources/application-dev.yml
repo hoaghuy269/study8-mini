@@ -14,11 +14,15 @@ spring:
   data:
     redis:
       url: ${REDIS_URL}
-camunda:
-  bpm:
-    admin-user:
-      id: ${CAMUNDA_USERNAME}
-      password: ${CAMUNDA_PASSWORD}
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+    host: smtp.gmail.com
+    port: 587
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE

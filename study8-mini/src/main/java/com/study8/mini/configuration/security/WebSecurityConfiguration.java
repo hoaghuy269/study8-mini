@@ -55,7 +55,7 @@ public class WebSecurityConfiguration {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(SecurityConstant.CAMUNDA_URL)
+                        auth.requestMatchers(SecurityConstant.AUTH_URL)
                                 .permitAll()
                                 .anyRequest().authenticated()
                 );

@@ -22,4 +22,9 @@ public interface AuthAccountRepository
             + "where e.username = :username "
             + "and coalesce(e.deletedId, 0) = 0")
     Optional<AuthAccount> findByUsername(@Param("username") String username);
+
+    @Query("select e from AuthAccount e "
+            + "where e.email = :email "
+            + "and coalesce(e.deletedId, 0) = 0")
+    Optional<AuthAccount> findByEmail(@Param("email") String email);
 }
