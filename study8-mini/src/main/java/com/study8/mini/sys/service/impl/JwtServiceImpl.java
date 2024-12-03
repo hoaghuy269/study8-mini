@@ -5,6 +5,7 @@ import com.study8.mini.configuration.security.UserPrincipal;
 import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.service.JwtService;
 import com.study8.mini.sys.service.SysConfigurationService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -58,7 +59,8 @@ public class JwtServiceImpl implements JwtService {
 
         return Jwts.builder()
                 .setId(userPrincipal.getId().toString())
-                .setSubject(userPrincipal.getUsername())
+                .claim("username", userPrincipal.getUsername())
+                .claim("email", userPrincipal.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()
                         + jwtExpiration))
@@ -69,9 +71,14 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String getUserNameFormToken(String token) {
         SecretKey secretKey = this.getSecretKey();
-        return Jwts.parserBuilder().setSigningKey(secretKey).build()
-                .parseClaimsJws(token).getBody().getSubject();
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("username", String.class);
     }
+
 
     @Override
     public boolean validateToken(String authToken) {
