@@ -88,17 +88,35 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 
     @Override
     public UserPrincipal loadUserPrincipal(String username) {
-        Optional<AuthAccount> account = authAccountRepository.findByUsername(username);
-        if (account.isPresent()) {
-            AuthAccount accountEntity = account.get();
-            AuthAccountDto accountDto = objectMapper.convertValue(accountEntity, AuthAccountDto.class);
+        AuthAccount accountByUsername = authAccountRepository.findByUsername(username).orElse(null);
+        AuthAccount accountByEmail = authAccountRepository.findByEmail(username).orElse(null);
+
+        if (ObjectUtils.isEmpty(accountByUsername)
+                && ObjectUtils.isEmpty(accountByEmail)) {
+            return null;
+        }
+
+        //Load UserPrincipal (Username or Email)
+        if (ObjectUtils.isNotEmpty(accountByUsername)) {
+            AuthAccountDto accountDto = objectMapper.convertValue(accountByUsername, AuthAccountDto.class);
 
             //Roles
-            List<AuthRoleDto> roles = authRoleService.getRoles(accountEntity.getId());
+            List<AuthRoleDto> roles = authRoleService.getRoles(accountByUsername.getId());
             accountDto.setRoles(roles);
 
             return UserPrincipal.build(accountDto);
         }
+
+        if (ObjectUtils.isNotEmpty(accountByEmail)) {
+            AuthAccountDto accountDto = objectMapper.convertValue(accountByEmail, AuthAccountDto.class);
+
+            //Roles
+            List<AuthRoleDto> roles = authRoleService.getRoles(accountByEmail.getId());
+            accountDto.setRoles(roles);
+
+            return UserPrincipal.build(accountDto);
+        }
+
         return null;
     }
 

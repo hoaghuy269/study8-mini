@@ -28,8 +28,10 @@ public class UserPrincipal implements UserDetails {
 
     private Long id;
     private String username;
+    private String email;
     private String code;
     private String password;
+    private String status;
     private Collection<? extends GrantedAuthority> authorities;
 
     public static UserPrincipal build(AuthAccountDto account) {
@@ -37,6 +39,8 @@ public class UserPrincipal implements UserDetails {
         userPrincipal.setId(account.getId());
         userPrincipal.setCode(account.getCode());
         userPrincipal.setUsername(account.getUsername());
+        userPrincipal.setEmail(account.getEmail());
+        userPrincipal.setStatus(account.getStatus());
         userPrincipal.setPassword(account.getPassword());
 
         List<GrantedAuthority> authorities = account.getRoles()
