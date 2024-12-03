@@ -8,8 +8,10 @@ import com.study8.mini.ext.service.RestfulService;
 import com.study8.mini.pm.dto.PmProcessDto;
 import com.study8.mini.pm.entity.PmProcess;
 import com.study8.mini.pm.enumf.ProcessCodeEnum;
-import com.study8.mini.pm.ext.req.StartProcessExtReqDto;
-import com.study8.mini.pm.ext.res.StartProcessExtResDto;
+import com.study8.mini.pm.ext.req.CompleteTaskExtReq;
+import com.study8.mini.pm.ext.req.StartProcessExtReq;
+import com.study8.mini.pm.ext.res.CompleteTaskExtRes;
+import com.study8.mini.pm.ext.res.StartProcessExtRes;
 import com.study8.mini.pm.repository.PmProcessRepository;
 import com.study8.mini.pm.service.PmProcessService;
 import com.study8.mini.sys.constant.SysConstant;
@@ -50,19 +52,18 @@ public class PmProcessServiceImpl implements PmProcessService {
 
     @Override
     public void startProcess(ProcessCodeEnum processCode, Long businessId) {
-        Map<String, String> camundaConfig = sysConfigurationService.getMapConfig(SysConstant.CAMUNDA);
+        Map<String, String> camundaConfig = this.getCamundaConfig();
         if (MapUtils.isEmpty(camundaConfig)) {
-            log.error("PmProcessServiceImpl | startProcess | Not found configuration of Camunda");
             return;
         }
         if (StringUtils.equals(camundaConfig.get(SysConstant.CAMUNDA_ENABLE), CoreConstant.ENABLE_CONFIG)) {
             String startProcessUrl = camundaConfig.get(SysConstant.CAMUNDA_URL) + camundaConfig.get(SysConstant.CAMUNDA_START_PROCESS_URL);
 
-            StartProcessExtReqDto requestDto = new StartProcessExtReqDto();
+            StartProcessExtReq requestDto = new StartProcessExtReq();
             requestDto.setProcessCode(processCode.getValue());
             requestDto.setBusinessId(businessId.toString());
 
-            CommonRestfulDto<StartProcessExtResDto> response = restfulService.post(
+            CommonRestfulDto<StartProcessExtRes> response = restfulService.post(
                     startProcessUrl,
                     requestDto,
                     new ParameterizedTypeReference<>() {}
@@ -74,12 +75,33 @@ public class PmProcessServiceImpl implements PmProcessService {
         } else {
             log.info("PmProcessServiceImpl | startProcess | Camunda not allow by configuration");
         }
-
     }
 
     @Override
     public void completeTask(String processInstanceId, String stepName) {
+        Map<String, String> camundaConfig = this.getCamundaConfig();
+        if (MapUtils.isEmpty(camundaConfig)) {
+            return;
+        }
+        if (StringUtils.equals(camundaConfig.get(SysConstant.CAMUNDA_ENABLE), CoreConstant.ENABLE_CONFIG)) {
+            String completeTaskUrl = camundaConfig.get(SysConstant.CAMUNDA_URL) + camundaConfig.get(SysConstant.CAMUNDA_COMPLETE_TASK_URL);
 
+            CompleteTaskExtReq completeTaskExtReq = new CompleteTaskExtReq();
+            completeTaskExtReq.setProcessInstanceId(processInstanceId);
+            completeTaskExtReq.setStepCode(stepName);
+
+            CommonRestfulDto<CompleteTaskExtRes> response = restfulService.post(completeTaskUrl,
+                    completeTaskExtReq,
+                    new ParameterizedTypeReference<>() {}
+            );
+
+            CompleteTaskExtRes data = response.getData();
+            if (ObjectUtils.isEmpty(data)) {
+                log.error("PmProcessServiceImpl | completeTask | Camunda complete task error");
+            }
+        } else {
+            log.info("PmProcessServiceImpl | startProcess | Camunda not allow by configuration");
+        }
     }
 
     @Override
@@ -91,7 +113,7 @@ public class PmProcessServiceImpl implements PmProcessService {
         return null;
     }
 
-    public void saveProcess(Long businessId, String processInstanceId, ProcessCodeEnum processCode) {
+    private void saveProcess(Long businessId, String processInstanceId, ProcessCodeEnum processCode) {
         PmProcess entity = new PmProcess();
         entity.setCode(processCode.getValue());
         entity.setProcessId(processInstanceId);
@@ -101,5 +123,14 @@ public class PmProcessServiceImpl implements PmProcessService {
 
         //Do save
         pmProcessRepository.save(entity);
+    }
+
+    private Map<String, String> getCamundaConfig() {
+        Map<String, String> camundaConfig = sysConfigurationService.getMapConfig(SysConstant.CAMUNDA);
+        if (MapUtils.isEmpty(camundaConfig)) {
+            log.error("PmProcessServiceImpl | getCamundaConfig | Not found configuration of Camunda");
+            return null;
+        }
+        return camundaConfig;
     }
 }

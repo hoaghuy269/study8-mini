@@ -1,21 +1,18 @@
-package com.study8.camunda.dto;
+package com.study8.mini.pm.ext.res;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * ProcessDto
+ * StartProcessExtRes
  * @Date: 2024-12-02
  * @Author: HuyNH
- * @Desc: ProcessDto
+ * @Desc: StartProcessExtRes
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProcessDto {
+public class StartProcessExtRes {
     private String processInstanceId;
-    private String processCode;
-    private String businessId;
-    private String stepCode;
 }

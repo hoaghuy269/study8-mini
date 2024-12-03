@@ -31,4 +31,5 @@ public class SysConstant {
     public static final String CAMUNDA_ENABLE = "CAMUNDA_ENABLE";
     public static final String CAMUNDA_URL = "CAMUNDA_URL";
     public static final String CAMUNDA_START_PROCESS_URL = "CAMUNDA_START_PROCESS_URL";
+    public static final String CAMUNDA_COMPLETE_TASK_URL = "CAMUNDA_COMPLETE_TASK_URL";
 }

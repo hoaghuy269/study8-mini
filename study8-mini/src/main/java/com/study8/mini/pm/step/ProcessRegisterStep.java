@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProcessRegisterStep {
-    public static final String CREATE = "CREATE";
     public static final String OTP = "OTP";
     public static final String VERIFY = "VERIFY";
     public static final String SUBMIT = "SUBMIT";

@@ -18,4 +18,8 @@ INSERT INTO sys_configuration
 (group_code, code, value, created_date, created_id)
 VALUES('CAMUNDA', 'CAMUNDA_START_PROCESS_URL', '/start', current_timestamp, 1);
 
+INSERT INTO sys_configuration
+(group_code, code, value, created_date, created_id)
+VALUES('CAMUNDA', 'CAMUNDA_COMPLETE_TASK_URL', '/complete-task', current_timestamp, 1);
+
 

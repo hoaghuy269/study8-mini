@@ -43,7 +43,7 @@ public class ProcessServiceImpl implements ProcessService {
     @Override
     public ProcessDto completeTask(ProcessDto dto) {
         String processInstanceId = dto.getProcessInstanceId();
-        String step = dto.getStepName();
+        String step = dto.getStepCode();
 
         List<Task> tasks = taskService.createTaskQuery()
                 .processInstanceId(processInstanceId)

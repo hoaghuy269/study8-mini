@@ -5,14 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * StartProcessExtResDto
+ * CompleteTaskExtRes
  * @Date: 2024-12-02
  * @Author: HuyNH
- * @Desc: StartProcessExtResDto
+ * @Desc: CompleteTaskExtRes
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class StartProcessExtResDto {
+public class CompleteTaskExtRes {
     private String processInstanceId;
 }

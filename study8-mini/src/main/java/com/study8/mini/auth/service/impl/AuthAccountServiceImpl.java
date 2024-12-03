@@ -255,6 +255,16 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                     pmProcessService.completeTask(pmProcessDto.getProcessId(), ProcessRegisterStep.OTP);
                 }
             }
+            case VERIFY -> {
+                if (ObjectUtils.isNotEmpty(pmProcessDto)) {
+                    pmProcessService.completeTask(pmProcessDto.getProcessId(), ProcessRegisterStep.VERIFY);
+                }
+            }
+            case SUBMIT -> {
+                if (ObjectUtils.isNotEmpty(pmProcessDto)) {
+                    pmProcessService.completeTask(pmProcessDto.getProcessId(), ProcessRegisterStep.SUBMIT);
+                }
+            }
         }
     }
 }
