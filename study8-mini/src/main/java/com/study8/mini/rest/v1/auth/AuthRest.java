@@ -42,4 +42,14 @@ public interface AuthRest {
     @PostMapping(RestApiConstant.API_REGISTER)
     CommonApiResponse<RegisterRes> register(@RequestBody @Valid RegisterReq registerReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * @API: /auth/api/v1/logout
+     * @Date: 2024-12-03
+     * @Author: HuyNH
+     * @Desc: Logout API
+     */
+    @PostMapping(RestApiConstant.API_LOGOUT)
+    CommonApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response);
+
 }

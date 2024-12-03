@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.common.rest.CommonApiResponse;
+import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.core.dto.UserAuthenticationToken;
 import com.study8.mini.core.util.LanguageUtils;
 import com.study8.mini.rest.v1.auth.AuthRest;
@@ -98,6 +99,27 @@ public class AuthRestImpl implements AuthRest {
             return CommonApiResponse.handleSuccess(result, locale);
         } catch (Exception e) {
             log.error("AuthApiRestImpl | register", e);
+            return CommonApiResponse.handleError(e.getMessage(), response);
+        }
+    }
+
+    @Override
+    public CommonApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        Locale locale = LanguageUtils.getLanguageFromHeader(request);
+        try {
+            String authHeader = request.getHeader(SecurityConstant.AUTHORIZATION);
+            if (authHeader == null || !authHeader.startsWith(SecurityConstant.BEARER)) {
+                return CommonApiResponse.handleError("Invalid token", response);
+            }
+
+            String token = authHeader.substring(7);
+            jwtService.blackListToken(token);
+
+            SecurityContextHolder.clearContext();
+
+            return CommonApiResponse.handleSuccess(null, locale);
+        } catch (Exception e) {
+            log.error("AuthApiRestImpl | logout", e);
             return CommonApiResponse.handleError(e.getMessage(), response);
         }
     }
