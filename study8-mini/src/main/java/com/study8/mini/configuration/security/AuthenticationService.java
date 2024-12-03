@@ -72,6 +72,7 @@ public class AuthenticationService implements AuthenticationManager {
                 throw new BadCredentialsException(message);
             }
             default -> {
+                log.error("Authentication | authenticate | Error Enum");
             }
         }
 
