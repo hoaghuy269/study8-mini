@@ -8,8 +8,10 @@ import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.core.dto.UserAuthenticationToken;
 import com.study8.mini.core.util.LanguageUtils;
 import com.study8.mini.rest.v1.auth.AuthRest;
+import com.study8.mini.rest.v1.req.ForgotPasswordReq;
 import com.study8.mini.rest.v1.req.LoginReq;
 import com.study8.mini.rest.v1.req.RegisterReq;
+import com.study8.mini.rest.v1.res.ForgotPasswordRes;
 import com.study8.mini.rest.v1.res.LoginRes;
 import com.study8.mini.rest.v1.res.RegisterRes;
 import com.study8.mini.sys.service.JwtService;
@@ -122,6 +124,12 @@ public class AuthRestImpl implements AuthRest {
             log.error("AuthApiRestImpl | logout", e);
             return CommonApiResponse.handleError(e.getMessage(), response);
         }
+    }
+
+    @Override
+    public CommonApiResponse<ForgotPasswordRes> forgotPassword(ForgotPasswordReq forgotPasswordReq,
+            HttpServletRequest request, HttpServletResponse response) {
+        return null;
     }
 }
 
