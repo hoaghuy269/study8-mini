@@ -4,6 +4,7 @@ import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.entity.AuthAccount;
 import com.study8.mini.common.repository.CommonRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
  * @Desc: AuthAccountRepository
  */
 @Repository
+@EnableJpaRepositories
 public interface AuthAccountRepository
         extends CommonRepository<AuthAccount, AuthAccountDto> {
     @Query("select e from AuthAccount e "

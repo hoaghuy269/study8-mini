@@ -2,6 +2,8 @@ package com.study8.mini.auth.validator;
 
 import com.study8.mini.auth.constant.AuthExceptionConstant;
 import com.study8.mini.auth.dto.AuthAccountDto;
+import com.study8.mini.auth.entity.AuthAccount;
+import com.study8.mini.auth.enumf.AccountErrCodeEnum;
 import com.study8.mini.auth.enumf.AccountStatusEnum;
 import com.study8.mini.auth.enumf.RoleEnum;
 import com.study8.mini.auth.service.AuthAccountService;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * AuthAccountValidator
@@ -156,6 +159,36 @@ public class AuthAccountValidator {
                 ExceptionUtils.throwApplicationException(
                         AuthExceptionConstant.AUTH_EXCEPTION_USERNAME_EXISTS, locale);
             }
+        }
+
+        return true;
+    }
+
+    public boolean validateBeforeForgotPassword(AuthAccount accountByUsername, AuthAccount accountByEmail, Locale locale)
+            throws ApplicationException {
+        if (ObjectUtils.isEmpty(accountByUsername)
+                && ObjectUtils.isEmpty(accountByEmail)) {
+            ExceptionUtils.throwApplicationException(
+                    AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS, locale);
+        }
+
+        AuthAccount account = Optional.ofNullable(accountByUsername).orElse(accountByEmail);
+        AccountStatusEnum statusEnum = AccountStatusEnum.resolveByValue(account.getStatus());
+        switch (statusEnum) {
+        case LOCKED -> ExceptionUtils.throwApplicationException(
+                AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_LOCKED,
+                AccountErrCodeEnum.ERR_ACCOUNT_LOCKED.getValue(), locale);
+        case NO_INFO -> ExceptionUtils.throwApplicationException(
+                AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NO_INFO,
+                AccountErrCodeEnum.ERR_ACCOUNT_LOCKED.getValue(), locale);
+        case NOT_VERIFIED -> ExceptionUtils.throwApplicationException(
+                AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_VERIFIED,
+                AccountErrCodeEnum.ERR_ACCOUNT_LOCKED.getValue(), locale);
+        case INACTIVE -> ExceptionUtils.throwApplicationException(
+                AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_INACTIVE,
+                AccountErrCodeEnum.ERR_ACCOUNT_INACTIVE.getValue(), locale);
+        case UNKNOWN -> ExceptionUtils.throwApplicationException(
+                CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
         }
 
         return true;

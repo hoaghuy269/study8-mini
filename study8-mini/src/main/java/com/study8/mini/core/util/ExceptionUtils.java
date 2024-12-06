@@ -31,4 +31,11 @@ public class ExceptionUtils {
         String formattedMessage = MessageFormat.format(messageTemplate, parameters);
         throw new ApplicationException(formattedMessage);
     }
+
+    public static void throwApplicationException(String messageKey, String errorCode, Locale locale)
+            throws ApplicationException {
+        ResourceBundle messages = ResourceBundle.getBundle(CoreConstant.MESSAGES_SOURCE, locale);
+        String message = messages.getString(messageKey);
+        throw new ApplicationException(message, errorCode);
+    }
 }

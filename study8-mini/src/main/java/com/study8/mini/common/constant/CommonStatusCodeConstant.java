@@ -11,14 +11,19 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommonStatusCodeConstant {
+    //Status Code
     public static final Integer SUCCESS = 200;
     public static final Integer UNAUTHORIZED = 401;
     public static final Integer BAD_REQUEST = 400;
 
+    //Message
     public static final String MESSAGE_TILE_SUCCESS = "OK";
     public static final String MESSAGE_TITLE_BAD_REQUEST = "Bad Request";
     public static final String MESSAGE_TITLE_UNAUTHORIZED = "Unauthorized";
 
     public static final String MESSAGE_SUCCESS = "MESSAGE_SUCCESS";
     public static final String MESSAGE_BAD_REQUEST = "MESSAGE_BAD_REQUEST";
+
+    //Error Code
+    public static final String NO_ERR = "00";
 }

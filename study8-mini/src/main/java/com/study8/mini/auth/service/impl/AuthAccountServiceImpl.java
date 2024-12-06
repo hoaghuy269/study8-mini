@@ -264,6 +264,20 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 AuthAccountDto.class)).orElse(null);
     }
 
+    @Override
+    public AuthAccountDto forgotPassword(String username, Locale locale)
+            throws ApplicationException {
+        AuthAccount accountByUsername = authAccountRepository.findByUsername(username).orElse(null);
+        AuthAccount accountByEmail = authAccountRepository.findByEmail(username).orElse(null);
+
+        boolean isValidated = authAccountValidator.validateBeforeForgotPassword(
+                accountByUsername, accountByEmail, locale);
+        if (isValidated) {
+            //TODO: Generate secret and send email
+        }
+        return null;
+    }
+
     private void handleRegisterProcess(Long businessId, AccountStepEnum step) {
         PmProcessDto pmProcessDto = pmProcessService.getProcess(ProcessCodeEnum.PROCESS_REGISTER, businessId);
         switch (step) {

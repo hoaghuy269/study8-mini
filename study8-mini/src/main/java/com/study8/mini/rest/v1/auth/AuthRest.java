@@ -2,8 +2,10 @@ package com.study8.mini.rest.v1.auth;
 
 import com.study8.mini.common.constant.CommonApiConstant;
 import com.study8.mini.common.rest.CommonApiResponse;
+import com.study8.mini.rest.v1.req.ForgotPasswordReq;
 import com.study8.mini.rest.v1.req.LoginReq;
 import com.study8.mini.rest.v1.req.RegisterReq;
+import com.study8.mini.rest.v1.res.ForgotPasswordRes;
 import com.study8.mini.rest.v1.res.LoginRes;
 import com.study8.mini.rest.constant.RestApiConstant;
 import com.study8.mini.rest.v1.res.RegisterRes;
@@ -51,5 +53,15 @@ public interface AuthRest {
      */
     @PostMapping(RestApiConstant.API_LOGOUT)
     CommonApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * @API: /auth/api/v1/forgot-password
+     * @Date: 2024-12-03
+     * @Author: HuyNH
+     * @Desc: Forgot password
+     */
+    @PostMapping(RestApiConstant.API_FORGOT_PASSWORD)
+    CommonApiResponse<ForgotPasswordRes> forgotPassword(@RequestBody @Valid ForgotPasswordReq forgotPasswordReq,
+            HttpServletRequest request, HttpServletResponse response);
 
 }

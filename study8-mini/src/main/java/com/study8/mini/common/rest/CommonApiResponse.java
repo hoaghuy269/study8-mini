@@ -26,6 +26,7 @@ public class CommonApiResponse<T> {
     private int statusCode;
     private String title;
     private String message;
+    private String errorCode;
     private List<String> errorMessages;
     private LocalDateTime time;
     private T data;
@@ -39,6 +40,7 @@ public class CommonApiResponse<T> {
         response.setTitle(CommonStatusCodeConstant.MESSAGE_TILE_SUCCESS);
         response.setMessage(messages.getString(CommonStatusCodeConstant.MESSAGE_SUCCESS));
         response.setErrorMessages(null);
+        response.setErrorCode(CommonStatusCodeConstant.NO_ERR);
         response.setTime(LocalDateTime.now());
         response.setData(data);
 
@@ -52,6 +54,7 @@ public class CommonApiResponse<T> {
         response.setTitle(CommonStatusCodeConstant.MESSAGE_TITLE_BAD_REQUEST);
         response.setMessage(message);
         response.setErrorMessages(null);
+        response.setErrorCode(CommonStatusCodeConstant.NO_ERR);
         response.setTime(LocalDateTime.now());
         response.setData(null);
 
@@ -68,6 +71,7 @@ public class CommonApiResponse<T> {
         response.setTitle(CommonStatusCodeConstant.MESSAGE_TITLE_UNAUTHORIZED);
         response.setMessage(message);
         response.setErrorMessages(null);
+        response.setErrorCode(CommonStatusCodeConstant.NO_ERR);
         response.setTime(LocalDateTime.now());
         response.setData(null);
 
@@ -97,6 +101,29 @@ public class CommonApiResponse<T> {
                 })
                 .toList();
         response.setErrorMessages(errorMessages);
+        response.setErrorCode(CommonStatusCodeConstant.NO_ERR);
+
+        return response;
+    }
+
+    public static <T> CommonApiResponse<T> handleErrorWithCode(String message, HttpServletResponse httpServletResponse, String errorCode) {
+        CommonApiResponse<T> response = new CommonApiResponse<>();
+
+        response.setStatusCode(CommonStatusCodeConstant.BAD_REQUEST);
+        response.setTitle(CommonStatusCodeConstant.MESSAGE_TITLE_BAD_REQUEST);
+        response.setMessage(message);
+        response.setErrorMessages(null);
+        response.setTime(LocalDateTime.now());
+        response.setData(null);
+
+        if (StringUtils.isNotEmpty(errorCode)) {
+            response.setErrorCode(errorCode);
+        } else {
+            response.setErrorCode(CommonStatusCodeConstant.NO_ERR);
+        }
+
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
         return response;
     }

@@ -6,10 +6,13 @@ import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.common.rest.CommonApiResponse;
 import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.core.dto.UserAuthenticationToken;
+import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.LanguageUtils;
 import com.study8.mini.rest.v1.auth.AuthRest;
+import com.study8.mini.rest.v1.req.ForgotPasswordReq;
 import com.study8.mini.rest.v1.req.LoginReq;
 import com.study8.mini.rest.v1.req.RegisterReq;
+import com.study8.mini.rest.v1.res.ForgotPasswordRes;
 import com.study8.mini.rest.v1.res.LoginRes;
 import com.study8.mini.rest.v1.res.RegisterRes;
 import com.study8.mini.sys.service.JwtService;
@@ -118,6 +121,26 @@ public class AuthRestImpl implements AuthRest {
             SecurityContextHolder.clearContext();
 
             return CommonApiResponse.handleSuccess(null, locale);
+        } catch (Exception e) {
+            log.error("AuthApiRestImpl | logout", e);
+            return CommonApiResponse.handleError(e.getMessage(), response);
+        }
+    }
+
+    @Override
+    public CommonApiResponse<ForgotPasswordRes> forgotPassword(ForgotPasswordReq forgotPasswordReq,
+            HttpServletRequest request, HttpServletResponse response) {
+        Locale locale = LanguageUtils.getLanguageFromHeader(request);
+        try {
+            ForgotPasswordRes result = objectMapper.convertValue(
+                    authAccountService.forgotPassword(forgotPasswordReq.getUsername(), locale),
+                    ForgotPasswordRes.class);
+
+            return CommonApiResponse.handleSuccess(result, locale);
+        } catch (ApplicationException applicationException) {
+            log.error("AuthApiRestImpl | logout", applicationException);
+            return CommonApiResponse.handleErrorWithCode(applicationException.getMessage(),
+                    response, applicationException.getErrorCode());
         } catch (Exception e) {
             log.error("AuthApiRestImpl | logout", e);
             return CommonApiResponse.handleError(e.getMessage(), response);
