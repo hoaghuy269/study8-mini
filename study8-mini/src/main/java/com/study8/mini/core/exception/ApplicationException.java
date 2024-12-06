@@ -20,8 +20,4 @@ public class ApplicationException extends Exception {
         super(errorMessage);
         this.errorCode = errorCode;
     }
-
-    public ApplicationException(String errorMessage, Throwable err) {
-        super(errorMessage, err);
-    }
 }
