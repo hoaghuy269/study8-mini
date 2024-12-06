@@ -6,6 +6,7 @@ import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.common.rest.CommonApiResponse;
 import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.core.dto.UserAuthenticationToken;
+import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.LanguageUtils;
 import com.study8.mini.rest.v1.auth.AuthRest;
 import com.study8.mini.rest.v1.req.ForgotPasswordReq;
@@ -129,7 +130,21 @@ public class AuthRestImpl implements AuthRest {
     @Override
     public CommonApiResponse<ForgotPasswordRes> forgotPassword(ForgotPasswordReq forgotPasswordReq,
             HttpServletRequest request, HttpServletResponse response) {
-        return null;
+        Locale locale = LanguageUtils.getLanguageFromHeader(request);
+        try {
+            ForgotPasswordRes result = objectMapper.convertValue(
+                    authAccountService.forgotPassword(forgotPasswordReq.getUsername(), locale),
+                    ForgotPasswordRes.class);
+
+            return CommonApiResponse.handleSuccess(result, locale);
+        } catch (ApplicationException applicationException) {
+            log.error("AuthApiRestImpl | logout", applicationException);
+            return CommonApiResponse.handleErrorWithCode(applicationException.getMessage(),
+                    response, applicationException.getErrorCode());
+        } catch (Exception e) {
+            log.error("AuthApiRestImpl | logout", e);
+            return CommonApiResponse.handleError(e.getMessage(), response);
+        }
     }
 }
 

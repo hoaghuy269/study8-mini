@@ -14,4 +14,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ForgotPasswordRes {
+    private String username;
+    private String status;
+    private String name;
+    private String email;
 }

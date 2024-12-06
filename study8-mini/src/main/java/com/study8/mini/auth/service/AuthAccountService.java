@@ -23,4 +23,6 @@ public interface AuthAccountService {
     AuthAccountDto getById(Long id);
 
     AuthAccountDto getByUsername(String username);
+
+    AuthAccountDto forgotPassword(String username, Locale locale) throws ApplicationException;
 }
