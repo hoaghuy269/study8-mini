@@ -72,7 +72,21 @@ public class SysOtpServiceImpl implements SysOtpService {
                 result = objectMapper.convertValue(entity, SysOtpDto.class);
             }
             case FORGOT_PASSWORD -> {
+                SysOtp saveData = new SysOtp();
+                saveData.setType(OtpTypeEnum.FORGOT_PASSWORD.getValue());
+                saveData.setUserId(userId);
+                saveData.setCode(UUIDUtils.randomOTP());
+                saveData.setActive(true);
+                saveData.setSendDate(today);
+                saveData.setExpiryDate(this.getExpiryDate(today));
+                saveData.setVerified(false);
+                saveData.setVerifiedDate(null);
+                saveData.setCreatedDate(today);
+                saveData.setCreatedId(CoreSystem.SYSTEM_ID);
 
+                entity = sysOtpRepository.save(saveData);
+
+                result = objectMapper.convertValue(entity, SysOtpDto.class);
             }
         }
 

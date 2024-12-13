@@ -26,7 +26,7 @@ import com.study8.mini.pm.dto.PmProcessDto;
 import com.study8.mini.pm.enumf.ProcessCodeEnum;
 import com.study8.mini.pm.service.PmProcessService;
 import com.study8.mini.pm.step.ProcessRegisterStep;
-import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysEmailConstant;
 import com.study8.mini.sys.dto.SendEmailDto;
 import com.study8.mini.sys.dto.SendEmailResultDto;
 import com.study8.mini.sys.dto.SysOtpDto;
@@ -166,7 +166,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 
                         sendEmailDto.setTo(Collections.singletonList(dto.getEmail()));
                         sendEmailDto.setTemplateCode(EmailTemplateEnum.VERIFY_EMAIL);
-                        sendEmailDto.setSubject(ResourceUtils.getMessage(SysConstant.EMAIL_001_SUBJECT, locale));
+                        sendEmailDto.setSubject(ResourceUtils.getMessage(SysEmailConstant.EMAIL_001_SUBJECT, locale));
 
                         Map<String, Object> mapData = new HashMap<>();
                         mapData.put("otpCode", otp.getCode());
@@ -270,10 +270,35 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         AuthAccount accountByUsername = authAccountRepository.findByUsername(username).orElse(null);
         AuthAccount accountByEmail = authAccountRepository.findByEmail(username).orElse(null);
 
+        AuthAccount account = Optional.ofNullable(accountByUsername).orElse(accountByEmail);
+
         boolean isValidated = authAccountValidator.validateBeforeForgotPassword(
-                accountByUsername, accountByEmail, locale);
-        if (isValidated) {
-            //TODO: Generate secret and send email
+                account, locale);
+        if (isValidated && ObjectUtils.isNotEmpty(account)) {
+            SendEmailDto sendEmailDto = new SendEmailDto();
+
+            //Do generate OTP
+            SysOtpDto otp = sysOtpService.generateOTP(OtpTypeEnum.FORGOT_PASSWORD, account.getId());
+
+            sendEmailDto.setTo(Collections.singletonList(account.getEmail()));
+            sendEmailDto.setTemplateCode(EmailTemplateEnum.FORGOT_PASSWORD_EMAIL);
+            sendEmailDto.setSubject(ResourceUtils.getMessage(SysEmailConstant.EMAIL_002_SUBJECT, locale));
+
+            Map<String, Object> mapData = new HashMap<>();
+            mapData.put("email", account.getEmail());
+            mapData.put("otpCode", otp.getCode());
+            if (CommonLanguageEnum.EN.getValue().equals(locale.getLanguage())) {
+                mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+                        CommonDateTimeConstant.DATETIME_NO_SECOND_US));
+            } else {
+                mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+                        CommonDateTimeConstant.DATETIME_NO_SECOND));
+            }
+            sendEmailDto.setMapData(mapData);
+
+            //Do send email
+            SendEmailResultDto sendEmailResultDto = emailService
+                    .sendEmailSMTP(sendEmailDto, locale);
         }
         return null;
     }

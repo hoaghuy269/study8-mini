@@ -15,4 +15,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ForgotPasswordReq {
     private String username;
+    private String otpCode;
+    private String step;
 }

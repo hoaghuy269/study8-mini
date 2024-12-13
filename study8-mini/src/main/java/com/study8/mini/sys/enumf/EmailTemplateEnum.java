@@ -10,7 +10,8 @@ import lombok.Getter;
  */
 @Getter
 public enum EmailTemplateEnum {
-    VERIFY_EMAIL("email_001");
+    VERIFY_EMAIL("email_001"),
+    FORGOT_PASSWORD_EMAIL("email_002");
 
     private final String value;
 

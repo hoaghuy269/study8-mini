@@ -164,15 +164,13 @@ public class AuthAccountValidator {
         return true;
     }
 
-    public boolean validateBeforeForgotPassword(AuthAccount accountByUsername, AuthAccount accountByEmail, Locale locale)
+    public boolean validateBeforeForgotPassword(AuthAccount account, Locale locale)
             throws ApplicationException {
-        if (ObjectUtils.isEmpty(accountByUsername)
-                && ObjectUtils.isEmpty(accountByEmail)) {
+        if (ObjectUtils.isEmpty(account)) {
             ExceptionUtils.throwApplicationException(
                     AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS, locale);
         }
 
-        AuthAccount account = Optional.ofNullable(accountByUsername).orElse(accountByEmail);
         AccountStatusEnum statusEnum = AccountStatusEnum.resolveByValue(account.getStatus());
         switch (statusEnum) {
         case LOCKED -> ExceptionUtils.throwApplicationException(
