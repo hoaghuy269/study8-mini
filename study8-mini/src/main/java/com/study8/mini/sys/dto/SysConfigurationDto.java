@@ -19,4 +19,5 @@ public class SysConfigurationDto extends CommonDto {
     private String groupCode;
     private String code;
     private String value;
+    private Boolean publicFlag;
 }

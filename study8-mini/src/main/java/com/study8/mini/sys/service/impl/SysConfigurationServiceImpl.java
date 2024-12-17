@@ -1,5 +1,7 @@
 package com.study8.mini.sys.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.study8.mini.sys.dto.SysConfigurationDto;
 import com.study8.mini.sys.entity.SysConfiguration;
 import com.study8.mini.sys.repository.SysConfigurationRepository;
 import com.study8.mini.sys.service.SysConfigurationService;
@@ -29,6 +31,9 @@ public class SysConfigurationServiceImpl
     @Autowired
     private SysConfigurationRepository sysConfigurationRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public String getStringConfig(String groupCode, String code) {
         return sysConfigurationRepository.findByGroupCodeAndCode(groupCode, code)
@@ -53,6 +58,13 @@ public class SysConfigurationServiceImpl
         return data.map(sysConfigurations -> sysConfigurations
                 .stream()
                 .collect(Collectors.toMap(SysConfiguration::getCode, SysConfiguration::getValue)))
+                .orElse(null);
+    }
+
+    @Override
+    public SysConfigurationDto getPublicConfig(String groupCode, String code) {
+        Optional<SysConfiguration> data = sysConfigurationRepository.findByGroupCodeAndCodeAndIsPublic(groupCode, code);
+        return data.map(sysConfiguration -> objectMapper.convertValue(sysConfiguration, SysConfigurationDto.class))
                 .orElse(null);
     }
 }

@@ -68,18 +68,18 @@ public class EmailServiceImpl implements EmailService {
                 javaMailSender.send(mimeMessage);
             } catch (Exception e) {
                 log.error("EmailServiceImpl | sendEmailSMTP", e);
-                sendEmailResultDto.setIsSuccess(false);
+                sendEmailResultDto.setSuccess(false);
                 sendEmailResultDto.setErrorMessage(e.getMessage());
                 sendEmailResultDto.setTime(currentDate);
 
                 return sendEmailResultDto;
             }
             //Success
-            sendEmailResultDto.setIsSuccess(true);
+            sendEmailResultDto.setSuccess(true);
             sendEmailResultDto.setTime(currentDate);
             return sendEmailResultDto;
         } else {
-            sendEmailResultDto.setIsSuccess(false);
+            sendEmailResultDto.setSuccess(false);
             sendEmailResultDto.setErrorMessage(
                     ResourceUtils.getMessage(CoreExceptionConstant.EXCEPTION_DATA_PROCESSING,
                             locale));

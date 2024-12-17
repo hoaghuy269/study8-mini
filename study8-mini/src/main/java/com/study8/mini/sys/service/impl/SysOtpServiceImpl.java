@@ -3,6 +3,7 @@ package com.study8.mini.sys.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.mini.core.constant.CoreSystem;
 import com.study8.mini.core.util.UUIDUtils;
+import com.study8.mini.sys.constant.SysConfigConstant;
 import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.dto.SysOtpDto;
 import com.study8.mini.sys.entity.SysOtp;
@@ -74,13 +75,13 @@ public class SysOtpServiceImpl implements SysOtpService {
             case FORGOT_PASSWORD -> {
                 SysOtp saveData = new SysOtp();
                 saveData.setType(OtpTypeEnum.FORGOT_PASSWORD.getValue());
-                saveData.setUserId(userId);
                 saveData.setCode(UUIDUtils.randomOTP());
                 saveData.setActive(true);
                 saveData.setSendDate(today);
                 saveData.setExpiryDate(this.getExpiryDate(today));
                 saveData.setVerified(false);
                 saveData.setVerifiedDate(null);
+                saveData.setUserId(userId);
                 saveData.setCreatedDate(today);
                 saveData.setCreatedId(CoreSystem.SYSTEM_ID);
 
@@ -161,7 +162,7 @@ public class SysOtpServiceImpl implements SysOtpService {
 
     private LocalDateTime getExpiryDate(LocalDateTime currentDate) {
         Integer extraTime = sysConfigurationService
-                .getIntConfig(SysConstant.OTP, SysConstant.VERIFY_OTP_EXPIRATION);
+                .getIntConfig(SysConfigConstant.OTP, SysConfigConstant.VERIFY_OTP_EXPIRATION);
         return currentDate.plus(Duration
                 .ofMillis(extraTime));
     }

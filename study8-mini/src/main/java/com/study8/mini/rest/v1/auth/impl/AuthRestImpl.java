@@ -9,12 +9,12 @@ import com.study8.mini.core.dto.UserAuthenticationToken;
 import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.LanguageUtils;
 import com.study8.mini.rest.v1.auth.AuthRest;
-import com.study8.mini.rest.v1.req.ForgotPasswordReq;
-import com.study8.mini.rest.v1.req.LoginReq;
-import com.study8.mini.rest.v1.req.RegisterReq;
-import com.study8.mini.rest.v1.res.ForgotPasswordRes;
-import com.study8.mini.rest.v1.res.LoginRes;
-import com.study8.mini.rest.v1.res.RegisterRes;
+import com.study8.mini.rest.req.ForgotPasswordReq;
+import com.study8.mini.rest.req.LoginReq;
+import com.study8.mini.rest.req.RegisterReq;
+import com.study8.mini.rest.res.ForgotPasswordRes;
+import com.study8.mini.rest.res.LoginRes;
+import com.study8.mini.rest.res.RegisterRes;
 import com.study8.mini.sys.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -132,9 +132,9 @@ public class AuthRestImpl implements AuthRest {
             HttpServletRequest request, HttpServletResponse response) {
         Locale locale = LanguageUtils.getLanguageFromHeader(request);
         try {
-            ForgotPasswordRes result = objectMapper.convertValue(
-                    authAccountService.forgotPassword(forgotPasswordReq.getUsername(), locale),
-                    ForgotPasswordRes.class);
+            AuthAccountDto dto = authAccountService.forgotPassword(forgotPasswordReq.getUsername(), forgotPasswordReq.getStep(), locale);
+
+            ForgotPasswordRes result = objectMapper.convertValue(dto, ForgotPasswordRes.class);
 
             return CommonApiResponse.handleSuccess(result, locale);
         } catch (ApplicationException applicationException) {

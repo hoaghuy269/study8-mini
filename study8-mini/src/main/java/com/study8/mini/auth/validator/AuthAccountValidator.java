@@ -10,8 +10,10 @@ import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.core.constant.CoreExceptionConstant;
 import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.ExceptionUtils;
+import com.study8.mini.sys.constant.SysConfigConstant;
 import com.study8.mini.sys.constant.SysExceptionConstant;
 import com.study8.mini.sys.dto.SysOtpDto;
+import com.study8.mini.sys.service.SysConfigurationService;
 import com.study8.mini.sys.service.SysOtpService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +40,9 @@ public class AuthAccountValidator {
 
     @Autowired
     private SysOtpService sysOtpService;
+
+    @Autowired
+    private SysConfigurationService sysConfigurationService;
 
     public boolean validateBeforeRegister(AuthAccountDto data, Locale locale)
             throws ApplicationException {
@@ -76,19 +81,7 @@ public class AuthAccountValidator {
         }
 
         //Validate OTP
-        SysOtpDto newestOTP = sysOtpService.getNewestOTP(data.getId());
-        if (ObjectUtils.isNotEmpty(newestOTP) && newestOTP.getSendDate() != null) {
-            LocalDateTime nextAllowed = newestOTP.getSendDate().plusSeconds(30);
-            LocalDateTime now = LocalDateTime.now();
-
-            if (now.isBefore(nextAllowed)) {
-                String[] errors = new String[] {
-                        String.valueOf(Duration.between(now, nextAllowed).getSeconds())
-                };
-                ExceptionUtils.throwApplicationException(
-                        SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_BEEN_SENT, locale, errors);
-            }
-        }
+        this.validateSendOTP(data.getId(), locale);
 
         return true;
     }
@@ -190,5 +183,31 @@ public class AuthAccountValidator {
         }
 
         return true;
+    }
+
+    public boolean validateBeforeResendOtp(AuthAccount account, Locale locale)
+            throws ApplicationException {
+        this.validateSendOTP(account.getId(), locale);
+
+        return true;
+    }
+
+    private void validateSendOTP(Long accountId, Locale locale)
+            throws ApplicationException {
+        SysOtpDto newestOTP = sysOtpService.getNewestOTP(accountId);
+        if (ObjectUtils.isNotEmpty(newestOTP) && newestOTP.getSendDate() != null) {
+            int nextTimeOtp = sysConfigurationService.getIntConfig(SysConfigConstant.OTP, SysConfigConstant.OTP_TIME_INTERVAL);
+
+            LocalDateTime nextAllowed = newestOTP.getSendDate().plus(Duration.ofMillis(nextTimeOtp));
+            LocalDateTime now = LocalDateTime.now();
+
+            if (now.isBefore(nextAllowed)) {
+                String[] errors = new String[] {
+                        String.valueOf(Duration.between(now, nextAllowed).getSeconds())
+                };
+                ExceptionUtils.throwApplicationException(
+                        SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_BEEN_SENT, locale, errors);
+            }
+        }
     }
 }

@@ -17,8 +17,6 @@ public class SysConstant {
     public static final String JWT = "JWT";
     public static final String JWT_SECRET = "JWT_SECRET";
     public static final String JWT_EXPIRATION = "JWT_EXPIRATION";
-    public static final String OTP = "OTP";
-    public static final String VERIFY_OTP_EXPIRATION = "VERIFY_OTP_EXPIRATION";
     public static final String RESOURCE_EMAIL_TEMPLATES = "email-templates";
     public static final String PAGINATION = "PAGINATION";
     public static final String PAGE = "PAGE";

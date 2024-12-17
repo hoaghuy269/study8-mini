@@ -6,6 +6,7 @@ import com.study8.mini.auth.dto.AuthRoleDto;
 import com.study8.mini.auth.entity.AuthAccount;
 import com.study8.mini.auth.enumf.AccountStatusEnum;
 import com.study8.mini.auth.enumf.AccountStepEnum;
+import com.study8.mini.auth.enumf.ForgotPasswordStepEnum;
 import com.study8.mini.auth.enumf.RoleEnum;
 import com.study8.mini.auth.repository.AuthAccountRepository;
 import com.study8.mini.auth.service.AuthAccountRoleService;
@@ -185,7 +186,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                                 .sendEmailSMTP(sendEmailDto, locale);
 
                         if (ObjectUtils.isNotEmpty(sendEmailResultDto)
-                                && sendEmailResultDto.getIsSuccess()) {
+                                && sendEmailResultDto.isSuccess()) {
                             result = dto;
                         }
                     }
@@ -265,7 +266,7 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     }
 
     @Override
-    public AuthAccountDto forgotPassword(String username, Locale locale)
+    public AuthAccountDto forgotPassword(String username, String step, Locale locale)
             throws ApplicationException {
         AuthAccount accountByUsername = authAccountRepository.findByUsername(username).orElse(null);
         AuthAccount accountByEmail = authAccountRepository.findByEmail(username).orElse(null);
@@ -275,30 +276,31 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         boolean isValidated = authAccountValidator.validateBeforeForgotPassword(
                 account, locale);
         if (isValidated && ObjectUtils.isNotEmpty(account)) {
-            SendEmailDto sendEmailDto = new SendEmailDto();
+            ForgotPasswordStepEnum stepEnum = ForgotPasswordStepEnum.resolveByValue(step);
+            switch (stepEnum) {
+                case CREATE -> {
+                    SendEmailResultDto sendEmailResultDto = this.sendOtpEmail(account, locale);
+                    if (!sendEmailResultDto.isSuccess()) {
+                        log.error("AuthAccountServiceImpl | forgotPassword | sendEmail");
+                        throw new ApplicationException(sendEmailResultDto.getErrorMessage());
+                    }
+                }
+                case RESEND -> {
+                    boolean isValidatedOtp = authAccountValidator.validateBeforeResendOtp(
+                            account, locale);
+                    if (isValidatedOtp) {
+                        SendEmailResultDto sendEmailResultDto = this.sendOtpEmail(account, locale);
+                        if (!sendEmailResultDto.isSuccess()) {
+                            log.error("AuthAccountServiceImpl | forgotPassword | sendEmail");
+                            throw new ApplicationException(sendEmailResultDto.getErrorMessage());
+                        }
+                    }
+                }
+                case VERIFY -> {
 
-            //Do generate OTP
-            SysOtpDto otp = sysOtpService.generateOTP(OtpTypeEnum.FORGOT_PASSWORD, account.getId());
-
-            sendEmailDto.setTo(Collections.singletonList(account.getEmail()));
-            sendEmailDto.setTemplateCode(EmailTemplateEnum.FORGOT_PASSWORD_EMAIL);
-            sendEmailDto.setSubject(ResourceUtils.getMessage(SysEmailConstant.EMAIL_002_SUBJECT, locale));
-
-            Map<String, Object> mapData = new HashMap<>();
-            mapData.put("email", account.getEmail());
-            mapData.put("otpCode", otp.getCode());
-            if (CommonLanguageEnum.EN.getValue().equals(locale.getLanguage())) {
-                mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
-                        CommonDateTimeConstant.DATETIME_NO_SECOND_US));
-            } else {
-                mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
-                        CommonDateTimeConstant.DATETIME_NO_SECOND));
+                }
+                case UNKNOWN -> ExceptionUtils.throwApplicationException(CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
             }
-            sendEmailDto.setMapData(mapData);
-
-            //Do send email
-            SendEmailResultDto sendEmailResultDto = emailService
-                    .sendEmailSMTP(sendEmailDto, locale);
         }
         return null;
     }
@@ -323,5 +325,31 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                 }
             }
         }
+    }
+
+    private SendEmailResultDto sendOtpEmail(AuthAccount account, Locale locale) {
+        SendEmailDto sendEmailDto = new SendEmailDto();
+
+        //Do generate OTP
+        SysOtpDto otp = sysOtpService.generateOTP(OtpTypeEnum.FORGOT_PASSWORD, account.getId());
+
+        sendEmailDto.setTo(Collections.singletonList(account.getEmail()));
+        sendEmailDto.setTemplateCode(EmailTemplateEnum.FORGOT_PASSWORD_EMAIL);
+        sendEmailDto.setSubject(ResourceUtils.getMessage(SysEmailConstant.EMAIL_002_SUBJECT, locale));
+
+        Map<String, Object> mapData = new HashMap<>();
+        mapData.put("email", account.getEmail());
+        mapData.put("otpCode", otp.getCode());
+        if (CommonLanguageEnum.EN.getValue().equals(locale.getLanguage())) {
+            mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+                    CommonDateTimeConstant.DATETIME_NO_SECOND_US));
+        } else {
+            mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+                    CommonDateTimeConstant.DATETIME_NO_SECOND));
+        }
+        sendEmailDto.setMapData(mapData);
+
+        //Do send email
+        return emailService.sendEmailSMTP(sendEmailDto, locale);
     }
 }

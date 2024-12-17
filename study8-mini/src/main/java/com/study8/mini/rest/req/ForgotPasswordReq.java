@@ -1,4 +1,4 @@
-package com.study8.mini.rest.v1.req;
+package com.study8.mini.rest.req;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

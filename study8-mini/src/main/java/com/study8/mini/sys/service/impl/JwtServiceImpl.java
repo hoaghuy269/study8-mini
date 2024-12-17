@@ -1,5 +1,6 @@
 package com.study8.mini.sys.service.impl;
 
+import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.configuration.security.UserPrincipal;
 import com.study8.mini.sys.constant.SysConstant;
@@ -39,7 +40,10 @@ public class JwtServiceImpl implements JwtService {
     private SysConfigurationService sysConfigurationService;
 
     @Value("${jwt.expiration}")
-    private int defaultJwtExpiration;
+    private int jwtExpiration;
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     @Override
     public String parseJwt(HttpServletRequest request) {
@@ -54,8 +58,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateJwtToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        SecretKey secretKey = this.getSecretKey();
-        int jwtExpiration = this.getJwtExpiration();
+        SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
                 .setId(userPrincipal.getId().toString())
@@ -70,7 +73,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String getUserNameFormToken(String token) {
-        SecretKey secretKey = this.getSecretKey();
+        SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
@@ -82,7 +85,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean validateToken(String authToken) {
-        SecretKey secretKey = this.getSecretKey();
+        SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -113,37 +116,8 @@ public class JwtServiceImpl implements JwtService {
         }
     }
 
-    private SecretKey getSecretKey() {
-        try {
-            String jwtSecret;
-            Cache cache = cacheManager.getCache(SysConstant.DEFAULT_CACHE);
-            if (ObjectUtils.isNotEmpty(cache)) {
-                jwtSecret = cache.get(SysConstant.JWT_SECRET_CACHE_KEY, String.class);
-                if (StringUtils.isEmpty(jwtSecret)) {
-                    jwtSecret = sysConfigurationService.getStringConfig(SysConstant.JWT, SysConstant.JWT_SECRET);
-
-                    cache.put(SysConstant.JWT_SECRET_CACHE_KEY, jwtSecret);
-                }
-                return Keys.hmacShaKeyFor(jwtSecret
-                        .getBytes(StandardCharsets.UTF_8));
-            }
-        } catch (Exception e) {
-            log.error("JwtServiceImpl | getSecretKey", e);
-        }
+    @Override
+    public String generateJwtTokenForgotPassword(AuthAccountDto accountDto) {
         return null;
-    }
-
-    public Integer getJwtExpiration() {
-        Integer jwtExpiration = null;
-        Cache cache = cacheManager.getCache(SysConstant.DEFAULT_CACHE);
-        if (cache != null) {
-            jwtExpiration = cache.get(SysConstant.JWT_EXPIRATION_CACHE_KEY, Integer.class);
-            if (jwtExpiration == null) {
-                jwtExpiration = sysConfigurationService.getIntConfig(SysConstant.JWT, SysConstant.JWT_EXPIRATION);
-            } else {
-                jwtExpiration = defaultJwtExpiration;
-            }
-        }
-        return jwtExpiration;
     }
 }

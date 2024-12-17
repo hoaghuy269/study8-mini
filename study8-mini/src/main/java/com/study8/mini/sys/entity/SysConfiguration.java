@@ -1,5 +1,7 @@
 package com.study8.mini.sys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.study8.mini.common.entity.CommonEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,4 +39,7 @@ public class SysConfiguration
 
     @Column(name = "value")
     private String value;
+
+    @Column(name = "public_flag")
+    private Boolean publicFlag;
 }
