@@ -38,6 +38,5 @@ springdoc:
     enabled: ${API_DOC_ENABLE:true}
   swagger-ui:
     enabled: ${SWAGGER_UI_ENABLE:true}
-
 server:
   port: 8089

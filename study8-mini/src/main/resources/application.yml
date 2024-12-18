@@ -14,12 +14,29 @@ spring:
   data:
     redis:
       url: ${REDIS_URL}
+      repositories:
+        enabled : false
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+    host: smtp.gmail.com
+    port: 587
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 jwt:
-  expiration: 1800000
+  expiration: ${JWT_EXP:1800000}
+  secret: ${JWT_SEC:7c8cf262b99a67345dc73f6419c64cdbbbc12ce45d17b98212aff1bcff8d43d6d79ed8d14867804c83cd78ad1703291cc4c975d4addc1866a3ef99a2a29d729d98847e4c3c59fdcfc9cabffd3c4c27619b8d0fdc7ce189560b1e3a463cdf781d147a72beee22c1a3bd2cacdbac91b22bf9765f0a4de3011cc9e7316c96cd12034278cf2611855ce97327e3a10d3c4caf9c8dd0d1101d940d9101c92a2f807fe8d02cef6a16ae4cd0a998d5d344ef06a6f530d6bb4f6345b51e71ffe3ac7c38d8575ea34df177694c97373667ed343e5da006dcb83b9fb2b90cd10be5f0ff60fd0108905d9e170b9f86fac09d030e9b755385a9bad200115097d37b680f98e165}
+springdoc:
+  api-docs:
+    enabled: ${API_DOC_ENABLE:true}
+  swagger-ui:
+    enabled: ${SWAGGER_UI_ENABLE:true}
 server:
   port: 8089
