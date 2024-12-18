@@ -161,6 +161,20 @@ INSERT INTO sys_configuration
 (group_code, code, value, public_flag, created_date, created_id)
 VALUES('OTP', 'OTP_TIME_INTERVAL', '30000', true, current_timestamp, 1);
 
+/**
+ * sys_configuration
+ * @Date: 2024-12-18
+ * @Author: HuyNH
+ * @Desc: JWT forgot password config
+ */
+INSERT INTO sys_configuration
+(group_code, code, value, public_flag, created_date, created_id, updated_date, updated_id, deleted_date, deleted_id)
+VALUES('JWT', 'JWT_FP_EXPIRATION', '1800000', false, '2024-11-29 09:46:50.555', 1, NULL, NULL, NULL, NULL);
+
+INSERT INTO sys_configuration
+(group_code, code, value, public_flag, created_date, created_id, updated_date, updated_id, deleted_date, deleted_id)
+VALUES('JWT', 'JWT_FP_SECRET', '***', false, '2024-11-29 09:46:50.555', 1, NULL, NULL, NULL, NULL);
+
 
 
 

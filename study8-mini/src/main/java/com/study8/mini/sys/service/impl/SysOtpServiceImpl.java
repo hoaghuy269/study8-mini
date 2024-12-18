@@ -107,10 +107,10 @@ public class SysOtpServiceImpl implements SysOtpService {
     }
 
     @Override
-    public boolean verifyOTP(String otp, Long userId, Locale locale) {
+    public boolean verifyOTP(String otp, Long userId, OtpTypeEnum type, Locale locale) {
         LocalDateTime today = LocalDateTime.now();
 
-        Optional<SysOtp> data = sysOtpRepository.findByCodeAndUserId(otp, userId);
+        Optional<SysOtp> data = sysOtpRepository.findByCodeAndUserIdAndType(otp, userId, type.getValue());
         if (data.isEmpty()) {
             return false;
         } else {

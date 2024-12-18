@@ -132,7 +132,8 @@ public class AuthRestImpl implements AuthRest {
             HttpServletRequest request, HttpServletResponse response) {
         Locale locale = LanguageUtils.getLanguageFromHeader(request);
         try {
-            AuthAccountDto dto = authAccountService.forgotPassword(forgotPasswordReq.getUsername(), forgotPasswordReq.getStep(), locale);
+            AuthAccountDto dto = authAccountService.forgotPassword(forgotPasswordReq.getUsername(),
+                    forgotPasswordReq.getStep(), forgotPasswordReq.getOtpCode(), locale);
 
             ForgotPasswordRes result = objectMapper.convertValue(dto, ForgotPasswordRes.class);
 

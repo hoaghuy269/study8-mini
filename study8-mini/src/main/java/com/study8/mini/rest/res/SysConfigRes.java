@@ -14,7 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class SysConfigRes {
     private String groupCode;
     private String code;

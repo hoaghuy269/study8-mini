@@ -13,6 +13,7 @@ import com.study8.mini.core.util.ExceptionUtils;
 import com.study8.mini.sys.constant.SysConfigConstant;
 import com.study8.mini.sys.constant.SysExceptionConstant;
 import com.study8.mini.sys.dto.SysOtpDto;
+import com.study8.mini.sys.enumf.OtpTypeEnum;
 import com.study8.mini.sys.service.SysConfigurationService;
 import com.study8.mini.sys.service.SysOtpService;
 import org.apache.commons.lang3.ObjectUtils;
@@ -106,7 +107,7 @@ public class AuthAccountValidator {
         }
 
         //Verify OTP
-        boolean isOtpValid = sysOtpService.verifyOTP(data.getOtp(), data.getId(), locale);
+        boolean isOtpValid = sysOtpService.verifyOTP(data.getOtp(), data.getId(), OtpTypeEnum.VERIFY_ACCOUNT, locale);
         if (!isOtpValid) {
             ExceptionUtils.throwApplicationException(
                     SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_NOT_VALID, locale);
@@ -188,6 +189,21 @@ public class AuthAccountValidator {
             throws ApplicationException {
         this.validateSendOTP(account.getId(), locale);
 
+        return true;
+    }
+
+    public boolean validateBeforeVerify(AuthAccount account, String otp, Locale locale)
+            throws ApplicationException {
+        if (StringUtils.isEmpty(otp)) {
+            ExceptionUtils.throwApplicationException(
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
+        }
+
+        boolean otpValidated = sysOtpService.verifyOTP(otp, account.getId(), OtpTypeEnum.FORGOT_PASSWORD, locale);
+        if (!otpValidated) {
+            ExceptionUtils.throwApplicationException(
+                    SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_NOT_VALID, locale);
+        }
         return true;
     }
 

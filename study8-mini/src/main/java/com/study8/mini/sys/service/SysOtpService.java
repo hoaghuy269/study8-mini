@@ -16,5 +16,5 @@ public interface SysOtpService {
 
     SysOtpDto getNewestOTP(Long userId);
 
-    boolean verifyOTP(String otp, Long userId, Locale locale);
+    boolean verifyOTP(String otp, Long userId, OtpTypeEnum type, Locale locale);
 }

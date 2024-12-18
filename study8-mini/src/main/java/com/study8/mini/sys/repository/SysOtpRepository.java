@@ -38,7 +38,8 @@ public interface SysOtpRepository extends CommonRepository<SysOtp, SysOtpDto> {
     @Query("SELECT so FROM SysOtp so " +
             "WHERE so.active = true "
             + "and so.code = :code "
-            + "and so.userId = :userId " +
+            + "and so.userId = :userId "
+            + "and so.type = :type " +
             "AND coalesce(so.deletedId, 0) = 0")
-    Optional<SysOtp> findByCodeAndUserId(@Param("code") String code, @Param("userId") Long userId);
+    Optional<SysOtp> findByCodeAndUserIdAndType(@Param("code") String code, @Param("userId") Long userId, @Param("type") String type);
 }

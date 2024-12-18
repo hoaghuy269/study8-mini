@@ -34,6 +34,7 @@ import com.study8.mini.sys.dto.SysOtpDto;
 import com.study8.mini.sys.enumf.EmailTemplateEnum;
 import com.study8.mini.sys.enumf.OtpTypeEnum;
 import com.study8.mini.sys.service.EmailService;
+import com.study8.mini.sys.service.JwtService;
 import com.study8.mini.sys.service.SysOtpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -86,6 +87,9 @@ public class AuthAccountServiceImpl implements AuthAccountService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public UserPrincipal loadUserPrincipal(String username) {
@@ -266,8 +270,10 @@ public class AuthAccountServiceImpl implements AuthAccountService {
     }
 
     @Override
-    public AuthAccountDto forgotPassword(String username, String step, Locale locale)
+    public AuthAccountDto forgotPassword(String username, String step, String otpCode, Locale locale)
             throws ApplicationException {
+        AuthAccountDto result = new AuthAccountDto();
+
         AuthAccount accountByUsername = authAccountRepository.findByUsername(username).orElse(null);
         AuthAccount accountByEmail = authAccountRepository.findByEmail(username).orElse(null);
 
@@ -286,9 +292,9 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                     }
                 }
                 case RESEND -> {
-                    boolean isValidatedOtp = authAccountValidator.validateBeforeResendOtp(
+                    boolean isResendValidated = authAccountValidator.validateBeforeResendOtp(
                             account, locale);
-                    if (isValidatedOtp) {
+                    if (isResendValidated) {
                         SendEmailResultDto sendEmailResultDto = this.sendOtpEmail(account, locale);
                         if (!sendEmailResultDto.isSuccess()) {
                             log.error("AuthAccountServiceImpl | forgotPassword | sendEmail");
@@ -297,12 +303,16 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                     }
                 }
                 case VERIFY -> {
-
+                    boolean isOTPValidated = authAccountValidator.validateBeforeVerify(account, otpCode, locale);
+                    if (isOTPValidated) {
+                        String token = jwtService.generateJwtTokenForgotPassword(account.getId());
+                        result.setToken(token);
+                    }
                 }
                 case UNKNOWN -> ExceptionUtils.throwApplicationException(CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
             }
         }
-        return null;
+        return result;
     }
 
     private void handleRegisterProcess(Long businessId, AccountStepEnum step) {

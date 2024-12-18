@@ -15,5 +15,5 @@ public interface JwtService {
 
     void blackListToken(String token);
 
-    String generateJwtTokenForgotPassword(AuthAccountDto accountDto);
+    String generateJwtTokenForgotPassword(Long accountId);
 }

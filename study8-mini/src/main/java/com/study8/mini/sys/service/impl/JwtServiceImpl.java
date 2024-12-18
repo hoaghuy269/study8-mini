@@ -3,7 +3,9 @@ package com.study8.mini.sys.service.impl;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.configuration.security.UserPrincipal;
+import com.study8.mini.sys.constant.SysConfigConstant;
 import com.study8.mini.sys.service.JwtService;
+import com.study8.mini.sys.service.SysConfigurationService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -33,6 +36,9 @@ import java.util.Date;
 public class JwtServiceImpl implements JwtService {
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private SysConfigurationService sysConfigurationService;
 
     @Value("${jwt.expiration}")
     private int jwtExpiration;
@@ -112,7 +118,20 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateJwtTokenForgotPassword(AuthAccountDto accountDto) {
-        return null;
+    public String generateJwtTokenForgotPassword(Long accountId) {
+        Map<String, String> jwtConfigMap = sysConfigurationService.getMapConfig(SysConfigConstant.JWT);
+
+        String jwtSecret = jwtConfigMap.get(SysConfigConstant.JWT_FP_SECRET);
+        int jwtExpiration = Integer.parseInt(jwtConfigMap.get(SysConfigConstant.JWT_FP_EXPIRATION));
+
+        SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+
+        return Jwts.builder()
+                .setId(accountId.toString())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis()
+                        + jwtExpiration))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 }

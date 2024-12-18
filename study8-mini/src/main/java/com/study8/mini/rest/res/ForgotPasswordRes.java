@@ -15,6 +15,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ForgotPasswordRes {
-    @Schema(description = "Username", example = "username")
-    private String username;
+    @Schema(description = "Token", example = "token")
+    private String token;
 }
