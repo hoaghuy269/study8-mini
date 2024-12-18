@@ -5,7 +5,7 @@ import com.study8.mini.common.constant.CommonSignConstant;
 import com.study8.mini.common.enumf.CommonLanguageEnum;
 import com.study8.mini.core.constant.CoreExceptionConstant;
 import com.study8.mini.core.util.ResourceUtils;
-import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysEmailConstant;
 import com.study8.mini.sys.dto.SendEmailDto;
 import com.study8.mini.sys.dto.SendEmailResultDto;
 import com.study8.mini.sys.enumf.EmailTemplateEnum;
@@ -94,7 +94,7 @@ public class EmailServiceImpl implements EmailService {
                 .toString();
         StringBuilder templateFullNameBuilder = new StringBuilder();
         String htmlTemplate = ResourceUtils.getStringResource(
-                SysConstant.RESOURCE_EMAIL_TEMPLATES + CommonSignConstant.SPLASH +
+                SysEmailConstant.EMAIL_TEMPLATE_RESOURCE + CommonSignConstant.SPLASH +
                         templateFullNameBuilder.append(templateName)
                                 .append(CommonSignConstant.DASH)
                                 .append(templateLanguage)

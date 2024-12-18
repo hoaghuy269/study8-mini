@@ -3,9 +3,7 @@ package com.study8.mini.sys.service.impl;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.configuration.security.UserPrincipal;
-import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.service.JwtService;
-import com.study8.mini.sys.service.SysConfigurationService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -104,9 +102,9 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public void blackListToken(String token) {
         try {
-            Cache cache = cacheManager.getCache(SysConstant.BLACK_LIST_TOKEN);
+            Cache cache = cacheManager.getCache(SecurityConstant.BLACK_LIST_TOKEN);
             if (ObjectUtils.isNotEmpty(cache)) {
-                cache.put(SysConstant.BLACK_LIST_TOKEN, token);
+                cache.put(SecurityConstant.BLACK_LIST_TOKEN, token);
             }
         } catch (Exception e) {
             log.error("JwtServiceImpl | blackListToken", e);

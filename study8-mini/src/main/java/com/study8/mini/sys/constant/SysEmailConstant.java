@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SysEmailConstant {
+    public static final String EMAIL_TEMPLATE_RESOURCE = "email-templates";
     public static final String EMAIL = "EMAIL";
     public static final String EMAIL_USERNAME = "EMAIL_USERNAME";
     public static final String EMAIL_PASSWORD = "EMAIL_PASSWORD";

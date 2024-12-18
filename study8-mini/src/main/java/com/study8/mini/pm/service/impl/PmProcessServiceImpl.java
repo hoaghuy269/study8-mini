@@ -14,7 +14,7 @@ import com.study8.mini.pm.ext.res.CompleteTaskExtRes;
 import com.study8.mini.pm.ext.res.StartProcessExtRes;
 import com.study8.mini.pm.repository.PmProcessRepository;
 import com.study8.mini.pm.service.PmProcessService;
-import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysCamundaConstant;
 import com.study8.mini.sys.service.SysConfigurationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -57,8 +57,8 @@ public class PmProcessServiceImpl implements PmProcessService {
         if (MapUtils.isEmpty(camundaConfig)) {
             return;
         }
-        if (StringUtils.equals(camundaConfig.get(SysConstant.CAMUNDA_ENABLE), CoreConstant.ENABLE_CONFIG)) {
-            String startProcessUrl = camundaConfig.get(SysConstant.CAMUNDA_URL) + camundaConfig.get(SysConstant.CAMUNDA_START_PROCESS_URL);
+        if (StringUtils.equals(camundaConfig.get(SysCamundaConstant.CAMUNDA_ENABLE), CoreConstant.ENABLE_CONFIG)) {
+            String startProcessUrl = camundaConfig.get(SysCamundaConstant.CAMUNDA_URL) + camundaConfig.get(SysCamundaConstant.CAMUNDA_START_PROCESS_URL);
 
             StartProcessExtReq requestDto = new StartProcessExtReq();
             requestDto.setProcessCode(processCode.getValue());
@@ -84,8 +84,8 @@ public class PmProcessServiceImpl implements PmProcessService {
         if (MapUtils.isEmpty(camundaConfig)) {
             return;
         }
-        if (StringUtils.equals(camundaConfig.get(SysConstant.CAMUNDA_ENABLE), CoreConstant.ENABLE_CONFIG)) {
-            String completeTaskUrl = camundaConfig.get(SysConstant.CAMUNDA_URL) + camundaConfig.get(SysConstant.CAMUNDA_COMPLETE_TASK_URL);
+        if (StringUtils.equals(camundaConfig.get(SysCamundaConstant.CAMUNDA_ENABLE), CoreConstant.ENABLE_CONFIG)) {
+            String completeTaskUrl = camundaConfig.get(SysCamundaConstant.CAMUNDA_URL) + camundaConfig.get(SysCamundaConstant.CAMUNDA_COMPLETE_TASK_URL);
 
             CompleteTaskExtReq completeTaskExtReq = new CompleteTaskExtReq();
             completeTaskExtReq.setProcessInstanceId(processInstanceId);
@@ -127,7 +127,7 @@ public class PmProcessServiceImpl implements PmProcessService {
     }
 
     private Map<String, String> getCamundaConfig() {
-        Map<String, String> camundaConfig = sysConfigurationService.getMapConfig(SysConstant.CAMUNDA);
+        Map<String, String> camundaConfig = sysConfigurationService.getMapConfig(SysCamundaConstant.CAMUNDA);
         if (MapUtils.isEmpty(camundaConfig)) {
             log.error("PmProcessServiceImpl | getCamundaConfig | Not found configuration of Camunda");
             return Collections.emptyMap();

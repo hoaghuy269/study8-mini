@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.mini.core.constant.CoreSystem;
 import com.study8.mini.core.util.UUIDUtils;
 import com.study8.mini.sys.constant.SysConfigConstant;
-import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysPaginationConstant;
 import com.study8.mini.sys.dto.SysOtpDto;
 import com.study8.mini.sys.entity.SysOtp;
 import com.study8.mini.sys.enumf.OtpTypeEnum;
@@ -129,9 +129,9 @@ public class SysOtpServiceImpl implements SysOtpService {
     @Scheduled(fixedRate = 10800000) //Run every 3 hours
     public void deleteExpiredOTPJob() {
         LocalDateTime currentDate = LocalDateTime.now();
-        Map<String, String> pagination = sysConfigurationService.getMapConfig(SysConstant.PAGINATION);
-        int page = Integer.parseInt(pagination.get(SysConstant.PAGE));
-        int pageSize = Integer.parseInt(pagination.get(SysConstant.PAGE_SIZE));
+        Map<String, String> pagination = sysConfigurationService.getMapConfig(SysPaginationConstant.PAGINATION);
+        int page = Integer.parseInt(pagination.get(SysPaginationConstant.PAGE));
+        int pageSize = Integer.parseInt(pagination.get(SysPaginationConstant.PAGE_SIZE));
 
         log.info("SysOtpServiceImpl (Job) | deleteExpiredOTPJob | Start task");
 
