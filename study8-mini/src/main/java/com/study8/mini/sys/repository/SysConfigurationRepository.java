@@ -30,4 +30,12 @@ public interface SysConfigurationRepository
             + "where sc.groupCode = :groupCode "
             + "and coalesce(sc.deletedId, 0) = 0")
     Optional<List<SysConfiguration>> findByGroupCode(@Param("groupCode") String groupCode);
+
+    @Query("select sc from SysConfiguration sc "
+            + "where sc.groupCode = :groupCode "
+            + "and sc.code = :code "
+            + "and sc.publicFlag "
+            + "and coalesce(sc.deletedId, 0) = 0")
+    Optional<SysConfiguration> findByGroupCodeAndCodeAndIsPublic(@Param("groupCode") String groupCode,
+            @Param("code") String code);
 }

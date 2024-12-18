@@ -3,7 +3,8 @@ package com.study8.mini.sys.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.mini.core.constant.CoreSystem;
 import com.study8.mini.core.util.UUIDUtils;
-import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysConfigConstant;
+import com.study8.mini.sys.constant.SysPaginationConstant;
 import com.study8.mini.sys.dto.SysOtpDto;
 import com.study8.mini.sys.entity.SysOtp;
 import com.study8.mini.sys.enumf.OtpTypeEnum;
@@ -72,7 +73,21 @@ public class SysOtpServiceImpl implements SysOtpService {
                 result = objectMapper.convertValue(entity, SysOtpDto.class);
             }
             case FORGOT_PASSWORD -> {
+                SysOtp saveData = new SysOtp();
+                saveData.setType(OtpTypeEnum.FORGOT_PASSWORD.getValue());
+                saveData.setCode(UUIDUtils.randomOTP());
+                saveData.setActive(true);
+                saveData.setSendDate(today);
+                saveData.setExpiryDate(this.getExpiryDate(today));
+                saveData.setVerified(false);
+                saveData.setVerifiedDate(null);
+                saveData.setUserId(userId);
+                saveData.setCreatedDate(today);
+                saveData.setCreatedId(CoreSystem.SYSTEM_ID);
 
+                entity = sysOtpRepository.save(saveData);
+
+                result = objectMapper.convertValue(entity, SysOtpDto.class);
             }
         }
 
@@ -92,10 +107,10 @@ public class SysOtpServiceImpl implements SysOtpService {
     }
 
     @Override
-    public boolean verifyOTP(String otp, Long userId, Locale locale) {
+    public boolean verifyOTP(String otp, Long userId, OtpTypeEnum type, Locale locale) {
         LocalDateTime today = LocalDateTime.now();
 
-        Optional<SysOtp> data = sysOtpRepository.findByCodeAndUserId(otp, userId);
+        Optional<SysOtp> data = sysOtpRepository.findByCodeAndUserIdAndType(otp, userId, type.getValue());
         if (data.isEmpty()) {
             return false;
         } else {
@@ -114,9 +129,9 @@ public class SysOtpServiceImpl implements SysOtpService {
     @Scheduled(fixedRate = 10800000) //Run every 3 hours
     public void deleteExpiredOTPJob() {
         LocalDateTime currentDate = LocalDateTime.now();
-        Map<String, String> pagination = sysConfigurationService.getMapConfig(SysConstant.PAGINATION);
-        int page = Integer.parseInt(pagination.get(SysConstant.PAGE));
-        int pageSize = Integer.parseInt(pagination.get(SysConstant.PAGE_SIZE));
+        Map<String, String> pagination = sysConfigurationService.getMapConfig(SysPaginationConstant.PAGINATION);
+        int page = Integer.parseInt(pagination.get(SysPaginationConstant.PAGE));
+        int pageSize = Integer.parseInt(pagination.get(SysPaginationConstant.PAGE_SIZE));
 
         log.info("SysOtpServiceImpl (Job) | deleteExpiredOTPJob | Start task");
 
@@ -147,7 +162,7 @@ public class SysOtpServiceImpl implements SysOtpService {
 
     private LocalDateTime getExpiryDate(LocalDateTime currentDate) {
         Integer extraTime = sysConfigurationService
-                .getIntConfig(SysConstant.OTP, SysConstant.VERIFY_OTP_EXPIRATION);
+                .getIntConfig(SysConfigConstant.OTP, SysConfigConstant.VERIFY_OTP_EXPIRATION);
         return currentDate.plus(Duration
                 .ofMillis(extraTime));
     }

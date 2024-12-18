@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class SendEmailResultDto {
-    private Boolean isSuccess;
+    private boolean isSuccess;
     private String errorMessage;
     private LocalDateTime time;
 }

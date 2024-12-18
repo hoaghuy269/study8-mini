@@ -1,9 +1,10 @@
 package com.study8.mini.configuration.base;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysEmailConstant;
 import com.study8.mini.sys.service.SysConfigurationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -47,6 +48,7 @@ public class BeanConfiguration {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
 
@@ -63,9 +65,9 @@ public class BeanConfiguration {
         mailSender.setPort(mailPort);
 
         Map<String, String> emailConfigMap = sysConfigurationService
-                .getMapConfig(SysConstant.EMAIL);
-        mailSender.setUsername(emailConfigMap.get(SysConstant.EMAIL_USERNAME));
-        mailSender.setPassword(emailConfigMap.get(SysConstant.EMAIL_PASSWORD));
+                .getMapConfig(SysEmailConstant.EMAIL);
+        mailSender.setUsername(emailConfigMap.get(SysEmailConstant.EMAIL_USERNAME));
+        mailSender.setPassword(emailConfigMap.get(SysEmailConstant.EMAIL_PASSWORD));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

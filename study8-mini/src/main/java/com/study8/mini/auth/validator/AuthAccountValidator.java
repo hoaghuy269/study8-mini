@@ -2,14 +2,19 @@ package com.study8.mini.auth.validator;
 
 import com.study8.mini.auth.constant.AuthExceptionConstant;
 import com.study8.mini.auth.dto.AuthAccountDto;
+import com.study8.mini.auth.entity.AuthAccount;
+import com.study8.mini.auth.enumf.AccountErrCodeEnum;
 import com.study8.mini.auth.enumf.AccountStatusEnum;
 import com.study8.mini.auth.enumf.RoleEnum;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.core.constant.CoreExceptionConstant;
 import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.ExceptionUtils;
+import com.study8.mini.sys.constant.SysConfigConstant;
 import com.study8.mini.sys.constant.SysExceptionConstant;
 import com.study8.mini.sys.dto.SysOtpDto;
+import com.study8.mini.sys.enumf.OtpTypeEnum;
+import com.study8.mini.sys.service.SysConfigurationService;
 import com.study8.mini.sys.service.SysOtpService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +40,9 @@ public class AuthAccountValidator {
 
     @Autowired
     private SysOtpService sysOtpService;
+
+    @Autowired
+    private SysConfigurationService sysConfigurationService;
 
     public boolean validateBeforeRegister(AuthAccountDto data, Locale locale)
             throws ApplicationException {
@@ -73,19 +81,7 @@ public class AuthAccountValidator {
         }
 
         //Validate OTP
-        SysOtpDto newestOTP = sysOtpService.getNewestOTP(data.getId());
-        if (ObjectUtils.isNotEmpty(newestOTP) && newestOTP.getSendDate() != null) {
-            LocalDateTime nextAllowed = newestOTP.getSendDate().plusSeconds(30);
-            LocalDateTime now = LocalDateTime.now();
-
-            if (now.isBefore(nextAllowed)) {
-                String[] errors = new String[] {
-                        String.valueOf(Duration.between(now, nextAllowed).getSeconds())
-                };
-                ExceptionUtils.throwApplicationException(
-                        SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_BEEN_SENT, locale, errors);
-            }
-        }
+        this.validateSendOTP(data.getId(), locale);
 
         return true;
     }
@@ -111,7 +107,7 @@ public class AuthAccountValidator {
         }
 
         //Verify OTP
-        boolean isOtpValid = sysOtpService.verifyOTP(data.getOtp(), data.getId(), locale);
+        boolean isOtpValid = sysOtpService.verifyOTP(data.getOtp(), data.getId(), OtpTypeEnum.VERIFY_ACCOUNT, locale);
         if (!isOtpValid) {
             ExceptionUtils.throwApplicationException(
                     SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_NOT_VALID, locale);
@@ -159,5 +155,74 @@ public class AuthAccountValidator {
         }
 
         return true;
+    }
+
+    public boolean validateBeforeForgotPassword(AuthAccount account, Locale locale)
+            throws ApplicationException {
+        if (ObjectUtils.isEmpty(account)) {
+            ExceptionUtils.throwApplicationException(
+                    AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS, locale);
+        }
+
+        AccountStatusEnum statusEnum = AccountStatusEnum.resolveByValue(account.getStatus());
+        switch (statusEnum) {
+        case LOCKED -> ExceptionUtils.throwApplicationException(
+                AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_LOCKED,
+                AccountErrCodeEnum.ERR_ACCOUNT_LOCKED.getValue(), locale);
+        case NO_INFO -> ExceptionUtils.throwApplicationException(
+                AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NO_INFO,
+                AccountErrCodeEnum.ERR_ACCOUNT_LOCKED.getValue(), locale);
+        case NOT_VERIFIED -> ExceptionUtils.throwApplicationException(
+                AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_VERIFIED,
+                AccountErrCodeEnum.ERR_ACCOUNT_LOCKED.getValue(), locale);
+        case INACTIVE -> ExceptionUtils.throwApplicationException(
+                AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_INACTIVE,
+                AccountErrCodeEnum.ERR_ACCOUNT_INACTIVE.getValue(), locale);
+        case UNKNOWN -> ExceptionUtils.throwApplicationException(
+                CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
+        }
+
+        return true;
+    }
+
+    public boolean validateBeforeResendOtp(AuthAccount account, Locale locale)
+            throws ApplicationException {
+        this.validateSendOTP(account.getId(), locale);
+
+        return true;
+    }
+
+    public boolean validateBeforeVerify(AuthAccount account, String otp, Locale locale)
+            throws ApplicationException {
+        if (StringUtils.isEmpty(otp)) {
+            ExceptionUtils.throwApplicationException(
+                    CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
+        }
+
+        boolean otpValidated = sysOtpService.verifyOTP(otp, account.getId(), OtpTypeEnum.FORGOT_PASSWORD, locale);
+        if (!otpValidated) {
+            ExceptionUtils.throwApplicationException(
+                    SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_NOT_VALID, locale);
+        }
+        return true;
+    }
+
+    private void validateSendOTP(Long accountId, Locale locale)
+            throws ApplicationException {
+        SysOtpDto newestOTP = sysOtpService.getNewestOTP(accountId);
+        if (ObjectUtils.isNotEmpty(newestOTP) && newestOTP.getSendDate() != null) {
+            int nextTimeOtp = sysConfigurationService.getIntConfig(SysConfigConstant.OTP, SysConfigConstant.OTP_TIME_INTERVAL);
+
+            LocalDateTime nextAllowed = newestOTP.getSendDate().plus(Duration.ofMillis(nextTimeOtp));
+            LocalDateTime now = LocalDateTime.now();
+
+            if (now.isBefore(nextAllowed)) {
+                String[] errors = new String[] {
+                        String.valueOf(Duration.between(now, nextAllowed).getSeconds())
+                };
+                ExceptionUtils.throwApplicationException(
+                        SysExceptionConstant.SYS_EXCEPTION_OTP_HAS_BEEN_SENT, locale, errors);
+            }
+        }
     }
 }

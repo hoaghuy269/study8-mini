@@ -17,4 +17,7 @@ public class RestApiConstant {
     public static final String API_LOGOUT = "/logout";
     public static final String API_REGISTER = "/register";
     public static final String API_FORGOT_PASSWORD = "/forgot-password";
+    public static final String API_RESET_PASSWORD = "/reset-password";
+    public static final String API_SYS = "/sys";
+    public static final String API_CONFIGURATION = "/configuration";
 }

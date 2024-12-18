@@ -55,7 +55,7 @@ public class WebSecurityConfiguration {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(SecurityConstant.AUTH_URL)
+                        auth.requestMatchers(SecurityConstant.publicUrls.toArray(new String[0]))
                                 .permitAll()
                                 .anyRequest().authenticated()
                 );

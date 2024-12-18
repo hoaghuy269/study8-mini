@@ -13,4 +13,6 @@ public interface JwtService {
     boolean validateToken(String authToken);
 
     void blackListToken(String token);
+
+    String generateJwtTokenForgotPassword(Long accountId);
 }
