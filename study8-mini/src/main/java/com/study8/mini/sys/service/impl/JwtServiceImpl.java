@@ -1,6 +1,5 @@
 package com.study8.mini.sys.service.impl;
 
-import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.configuration.security.UserPrincipal;
 import com.study8.mini.sys.constant.SysConfigConstant;
