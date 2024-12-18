@@ -3,7 +3,6 @@ package com.study8.mini.configuration.base;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.study8.mini.sys.constant.SysConstant;
 import com.study8.mini.sys.constant.SysEmailConstant;
 import com.study8.mini.sys.service.SysConfigurationService;
 import org.springframework.beans.factory.annotation.Value;

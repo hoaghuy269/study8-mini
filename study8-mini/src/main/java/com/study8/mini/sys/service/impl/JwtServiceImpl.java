@@ -36,9 +36,6 @@ public class JwtServiceImpl implements JwtService {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
-    private SysConfigurationService sysConfigurationService;
-
     @Value("${jwt.expiration}")
     private int jwtExpiration;
 

@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Locale;
-import java.util.Optional;
 
 /**
  * AuthAccountValidator
