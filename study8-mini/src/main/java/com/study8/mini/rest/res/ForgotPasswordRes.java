@@ -1,5 +1,6 @@
 package com.study8.mini.rest.res;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,5 +15,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ForgotPasswordRes {
+    @Schema(description = "Username", example = "username")
     private String username;
 }

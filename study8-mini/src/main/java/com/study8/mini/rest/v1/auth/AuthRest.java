@@ -55,6 +55,13 @@ public interface AuthRest {
      * @Author: HuyNH
      * @Desc: Register API
      */
+    @Operation(summary = RestSwaggerConstant.API_REGISTER_TAG)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_200_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_200_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_500_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_500_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_400_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_400_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_401_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_401_TAG)
+    })
     @PostMapping(RestApiConstant.API_REGISTER)
     CommonApiResponse<RegisterRes> register(@RequestBody @Valid RegisterReq registerReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response);
@@ -65,6 +72,13 @@ public interface AuthRest {
      * @Author: HuyNH
      * @Desc: Logout API
      */
+    @Operation(summary = RestSwaggerConstant.API_LOGOUT_TAG)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_200_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_200_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_500_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_500_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_400_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_400_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_401_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_401_TAG)
+    })
     @PostMapping(RestApiConstant.API_LOGOUT)
     CommonApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response);
 
@@ -74,6 +88,13 @@ public interface AuthRest {
      * @Author: HuyNH
      * @Desc: Forgot password
      */
+    @Operation(summary = RestSwaggerConstant.API_FORGOT_PASSWORD_TAG)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_200_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_200_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_500_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_500_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_400_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_400_TAG),
+            @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_401_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_401_TAG)
+    })
     @PostMapping(RestApiConstant.API_FORGOT_PASSWORD)
     CommonApiResponse<ForgotPasswordRes> forgotPassword(@RequestBody @Valid ForgotPasswordReq forgotPasswordReq,
             HttpServletRequest request, HttpServletResponse response);
