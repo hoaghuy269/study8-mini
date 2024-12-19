@@ -121,24 +121,23 @@ public class JwtServiceImpl implements JwtService {
     public String generateJwtTokenForgotPassword(Long accountId) {
         Map<String, String> jwtConfigMap = sysConfigurationService.getMapConfig(SysConfigConstant.JWT);
 
-        String jwtSecret = jwtConfigMap.get(SysConfigConstant.JWT_FP_SECRET);
-        int jwtExpiration = Integer.parseInt(jwtConfigMap.get(SysConfigConstant.JWT_FP_EXPIRATION));
+        String jwtSecretForgotPassword = jwtConfigMap.get(SysConfigConstant.JWT_FP_SECRET);
+        int jwtExpirationForgotPassword = Integer.parseInt(jwtConfigMap.get(SysConfigConstant.JWT_FP_EXPIRATION));
 
-        SecretKey secretKey = this.getSecretKey(jwtSecret);
+        SecretKey secretKey = this.getSecretKey(jwtSecretForgotPassword);
 
         return Jwts.builder()
                 .setId(accountId.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()
-                        + jwtExpiration))
+                        + jwtExpirationForgotPassword))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     @Override
     public boolean validateTokenResetPassword(String authToken) {
-        String jwtSecret = this.getJwtSecretForgotPassword();
-        SecretKey secretKey = this.getSecretKey(jwtSecret);
+        SecretKey secretKey = this.getSecretKey(this.getJwtSecretForgotPassword());
 
         try {
             Jwts.parserBuilder()
@@ -160,8 +159,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Long getIdForToken(String token) {
-        String jwtSecret = this.getJwtSecretForgotPassword();
-        SecretKey secretKey = this.getSecretKey(jwtSecret);
+        SecretKey secretKey = this.getSecretKey(this.getJwtSecretForgotPassword());
 
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
