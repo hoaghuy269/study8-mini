@@ -137,7 +137,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean validateTokenResetPassword(String authToken) {
-        String jwtSecret = sysConfigurationService.getStringConfig(SysConfigConstant.JWT, SysConfigConstant.JWT_FP_SECRET);
+        String jwtSecret = this.getJwtSecretForgotPassword();
         SecretKey secretKey = this.getSecretKey(jwtSecret);
 
         try {
@@ -160,7 +160,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Long getIdForToken(String token) {
-        String jwtSecret = sysConfigurationService.getStringConfig(SysConfigConstant.JWT, SysConfigConstant.JWT_FP_SECRET);
+        String jwtSecret = this.getJwtSecretForgotPassword();
         SecretKey secretKey = this.getSecretKey(jwtSecret);
 
         Claims claims = Jwts.parserBuilder()
@@ -178,5 +178,9 @@ public class JwtServiceImpl implements JwtService {
             log.error("JwtUtils | getSecretKey", e);
             return null;
         }
+    }
+
+    private String getJwtSecretForgotPassword() {
+        return sysConfigurationService.getStringConfig(SysConfigConstant.JWT, SysConfigConstant.JWT_FP_SECRET);
     }
 }
