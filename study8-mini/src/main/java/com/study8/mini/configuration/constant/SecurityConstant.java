@@ -18,10 +18,10 @@ public class SecurityConstant {
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
     public static final String BLACK_LIST_TOKEN = "blackListToken";
-    public static final String AUTH_URL = CommonApiConstant.API_V1 + RestApiConstant.API_AUTH + RestApiConstant.API_ALL;
+    public static final String AUTH_URL = CommonApiConstant.API_V1 + RestApiConstant.API_AUTH + CommonApiConstant.API_ALL;
     public static final String SYS_CONFIGURATION_URL = CommonApiConstant.API_V1 + RestApiConstant.API_SYS + RestApiConstant.API_CONFIGURATION;
-    public static final String API_DOCS_URL = "/v3/api-docs" + RestApiConstant.API_ALL;
-    public static final String SWAGGER_UI_URL = "/swagger-ui" + RestApiConstant.API_ALL;
+    public static final String API_DOCS_URL = "/v3/api-docs" + CommonApiConstant.API_ALL;
+    public static final String SWAGGER_UI_URL = "/swagger-ui" + CommonApiConstant.API_ALL;
     public static final String SWAGGER_UI_HTML_URL = "/swagger-ui.html";
     public static final List<String> publicUrls = List.of(
             AUTH_URL,

@@ -17,6 +17,7 @@ public class RestSwaggerConstant {
     public static final String API_REGISTER_TAG = "Register API";
     public static final String API_LOGOUT_TAG = "Logout API";
     public static final String API_FORGOT_PASSWORD_TAG = "Forgot Password API";
+    public static final String API_RESET_PASSWORD_TAG = "Reset Password API";
 
     //Sys Rest
     public static final String SYS_REST_TAG = "System APIs";
