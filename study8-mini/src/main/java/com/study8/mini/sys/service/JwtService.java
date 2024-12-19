@@ -15,4 +15,8 @@ public interface JwtService {
     void blackListToken(String token);
 
     String generateJwtTokenForgotPassword(Long accountId);
+
+    boolean validateTokenResetPassword(String authToken);
+
+    Long getIdForToken(String token);
 }

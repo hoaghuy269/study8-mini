@@ -11,7 +11,6 @@ import lombok.Getter;
 @Getter
 public enum ForgotPasswordStepEnum {
     CREATE("CREATE"),
-    RESEND("RESEND"),
     VERIFY("VERIFY"),
     UNKNOWN("UNKNOWN")
     ;

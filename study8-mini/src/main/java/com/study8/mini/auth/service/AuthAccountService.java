@@ -24,5 +24,9 @@ public interface AuthAccountService {
 
     AuthAccountDto getByUsername(String username);
 
-    AuthAccountDto forgotPassword(String username, String step, String otpCode, Locale locale) throws ApplicationException;
+    AuthAccountDto forgotPassword(String username, String step, String otpCode, Locale locale)
+            throws ApplicationException;
+
+    void resetPassword(Long userId, String password, Locale locale)
+            throws ApplicationException;
 }
