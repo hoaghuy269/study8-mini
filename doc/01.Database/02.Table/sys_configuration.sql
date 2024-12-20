@@ -10,6 +10,7 @@ CREATE TABLE sys_configuration (
     group_code VARCHAR(30),
     code VARCHAR(30),
     value VARCHAR(255),
+    public_flag boolean,
     created_date TIMESTAMP NOT NULL,
     created_id BIGINT,
     updated_date TIMESTAMP,

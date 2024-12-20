@@ -4,13 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study8.mini.auth.dto.AuthAccountDto;
 import com.study8.mini.auth.service.AuthAccountService;
 import com.study8.mini.common.rest.CommonApiResponse;
+import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.core.dto.UserAuthenticationToken;
+import com.study8.mini.core.exception.ApplicationException;
 import com.study8.mini.core.util.LanguageUtils;
+import com.study8.mini.rest.req.ResetPasswordReq;
 import com.study8.mini.rest.v1.auth.AuthRest;
-import com.study8.mini.rest.v1.req.LoginReq;
-import com.study8.mini.rest.v1.req.RegisterReq;
-import com.study8.mini.rest.v1.res.LoginRes;
-import com.study8.mini.rest.v1.res.RegisterRes;
+import com.study8.mini.rest.req.ForgotPasswordReq;
+import com.study8.mini.rest.req.LoginReq;
+import com.study8.mini.rest.req.RegisterReq;
+import com.study8.mini.rest.res.ForgotPasswordRes;
+import com.study8.mini.rest.res.LoginRes;
+import com.study8.mini.rest.res.RegisterRes;
 import com.study8.mini.sys.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -98,6 +103,80 @@ public class AuthRestImpl implements AuthRest {
             return CommonApiResponse.handleSuccess(result, locale);
         } catch (Exception e) {
             log.error("AuthApiRestImpl | register", e);
+            return CommonApiResponse.handleError(e.getMessage(), response);
+        }
+    }
+
+    @Override
+    public CommonApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        Locale locale = LanguageUtils.getLanguageFromHeader(request);
+        try {
+            String authHeader = request.getHeader(SecurityConstant.AUTHORIZATION);
+            if (authHeader == null || !authHeader.startsWith(SecurityConstant.BEARER)) {
+                return CommonApiResponse.handleError("Invalid token", response);
+            }
+
+            String token = authHeader.substring(7);
+            jwtService.blackListToken(token);
+
+            SecurityContextHolder.clearContext();
+
+            return CommonApiResponse.handleSuccess(null, locale);
+        } catch (Exception e) {
+            log.error("AuthApiRestImpl | logout", e);
+            return CommonApiResponse.handleError(e.getMessage(), response);
+        }
+    }
+
+    @Override
+    public CommonApiResponse<ForgotPasswordRes> forgotPassword(ForgotPasswordReq forgotPasswordReq, BindingResult bindingResult,
+            HttpServletRequest request, HttpServletResponse response) {
+        Locale locale = LanguageUtils.getLanguageFromHeader(request);
+        try {
+            if (bindingResult.hasErrors()) {
+                return CommonApiResponse.handleBindingResult(
+                        bindingResult, locale);
+            }
+
+            AuthAccountDto dto = authAccountService.forgotPassword(forgotPasswordReq.getUsername(),
+                    forgotPasswordReq.getStep(), forgotPasswordReq.getOtpCode(), locale);
+
+            ForgotPasswordRes result = objectMapper.convertValue(dto, ForgotPasswordRes.class);
+
+            return CommonApiResponse.handleSuccess(result, locale);
+        } catch (ApplicationException applicationException) {
+            log.error("AuthApiRestImpl | logout", applicationException);
+            return CommonApiResponse.handleErrorWithCode(applicationException.getMessage(),
+                    response, applicationException.getErrorCode());
+        } catch (Exception e) {
+            log.error("AuthApiRestImpl | logout", e);
+            return CommonApiResponse.handleError(e.getMessage(), response);
+        }
+    }
+
+    @Override
+    public CommonApiResponse<Void> resetPassword(ResetPasswordReq resetPasswordReq, BindingResult bindingResult,
+            HttpServletRequest request, HttpServletResponse response) {
+        Locale locale = LanguageUtils.getLanguageFromHeader(request);
+        try {
+            if (bindingResult.hasErrors()) {
+                return CommonApiResponse.handleBindingResult(
+                        bindingResult, locale);
+            }
+
+            String token = jwtService.parseJwt(request);
+
+            boolean isTokenValid = jwtService.validateTokenResetPassword(token);
+            if (!isTokenValid) {
+                return CommonApiResponse.handleError("Invalid token", response);
+            }
+
+            Long accountId = jwtService.getIdForToken(token);
+            authAccountService.resetPassword(accountId, resetPasswordReq.getPassword(), locale);
+
+            return CommonApiResponse.handleSuccess(null, locale);
+        } catch (Exception e) {
+            log.error("AuthApiRestImpl | resetPassword", e);
             return CommonApiResponse.handleError(e.getMessage(), response);
         }
     }

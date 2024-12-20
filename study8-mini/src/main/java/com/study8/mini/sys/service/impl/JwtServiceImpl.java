@@ -2,7 +2,7 @@ package com.study8.mini.sys.service.impl;
 
 import com.study8.mini.configuration.constant.SecurityConstant;
 import com.study8.mini.configuration.security.UserPrincipal;
-import com.study8.mini.sys.constant.SysConstant;
+import com.study8.mini.sys.constant.SysConfigConstant;
 import com.study8.mini.sys.service.JwtService;
 import com.study8.mini.sys.service.SysConfigurationService;
 import io.jsonwebtoken.Claims;
@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -39,7 +40,10 @@ public class JwtServiceImpl implements JwtService {
     private SysConfigurationService sysConfigurationService;
 
     @Value("${jwt.expiration}")
-    private int defaultJwtExpiration;
+    private int jwtExpiration;
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     @Override
     public String parseJwt(HttpServletRequest request) {
@@ -54,8 +58,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateJwtToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        SecretKey secretKey = this.getSecretKey();
-        int jwtExpiration = this.getJwtExpiration();
+        SecretKey secretKey = this.getSecretKey(jwtSecret);
 
         return Jwts.builder()
                 .setId(userPrincipal.getId().toString())
@@ -70,7 +73,8 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String getUserNameFormToken(String token) {
-        SecretKey secretKey = this.getSecretKey();
+        SecretKey secretKey = this.getSecretKey(jwtSecret);
+
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
@@ -82,13 +86,72 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean validateToken(String authToken) {
-        SecretKey secretKey = this.getSecretKey();
+        return parseAndValidateToken(authToken, jwtSecret) != null;
+    }
+
+    @Override
+    public void blackListToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
+            Cache cache = cacheManager.getCache(SecurityConstant.BLACK_LIST_TOKEN);
+            if (ObjectUtils.isNotEmpty(cache)) {
+                cache.put(SecurityConstant.BLACK_LIST_TOKEN, token);
+            }
+        } catch (Exception e) {
+            log.error("JwtServiceImpl | blackListToken", e);
+        }
+    }
+
+    @Override
+    public String generateJwtTokenForgotPassword(Long accountId) {
+        Map<String, String> jwtConfigMap = sysConfigurationService.getMapConfig(SysConfigConstant.JWT);
+
+        String jwtSecretForgotPassword = jwtConfigMap.get(SysConfigConstant.JWT_FP_SECRET);
+        int jwtExpirationForgotPassword = Integer.parseInt(jwtConfigMap.get(SysConfigConstant.JWT_FP_EXPIRATION));
+
+        SecretKey secretKey = this.getSecretKey(jwtSecretForgotPassword);
+
+        return Jwts.builder()
+                .setId(accountId.toString())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis()
+                        + jwtExpirationForgotPassword))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    @Override
+    public boolean validateTokenResetPassword(String authToken) {
+        String secretKey = this.getJwtSecretForgotPassword();
+        return this.parseAndValidateToken(authToken, secretKey) != null;
+    }
+
+    @Override
+    public Long getIdForToken(String token) {
+        Claims claims = this.parseAndValidateToken(token, this.getJwtSecretForgotPassword());
+        return claims != null ? Long.parseLong(claims.getId()) : null;
+    }
+
+    private SecretKey getSecretKey(String jwtSecret) {
+        try {
+            return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            log.error("JwtUtils | getSecretKey", e);
+            return null;
+        }
+    }
+
+    private String getJwtSecretForgotPassword() {
+        return sysConfigurationService.getStringConfig(SysConfigConstant.JWT, SysConfigConstant.JWT_FP_SECRET);
+    }
+
+    private Claims parseAndValidateToken(String token, String secretKey) {
+        SecretKey key = this.getSecretKey(secretKey);
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(authToken);
-            return true;
+                    .parseClaimsJws(token)
+                    .getBody();
         } catch (MalformedJwtException e) {
             log.error("JwtUtils | Invalid JWT token", e);
         } catch (ExpiredJwtException e) {
@@ -98,40 +161,7 @@ public class JwtServiceImpl implements JwtService {
         } catch (IllegalArgumentException e) {
             log.error("JwtUtils | JWT claims string is empty", e);
         }
-        return false;
-    }
-
-    private SecretKey getSecretKey() {
-        try {
-            String jwtSecret;
-            Cache cache = cacheManager.getCache(SysConstant.DEFAULT_CACHE);
-            if (ObjectUtils.isNotEmpty(cache)) {
-                jwtSecret = cache.get(SysConstant.JWT_SECRET_CACHE_KEY, String.class);
-                if (StringUtils.isEmpty(jwtSecret)) {
-                    jwtSecret = sysConfigurationService.getStringConfig(SysConstant.JWT, SysConstant.JWT_SECRET);
-
-                    cache.put(SysConstant.JWT_SECRET_CACHE_KEY, jwtSecret);
-                }
-                return Keys.hmacShaKeyFor(jwtSecret
-                        .getBytes(StandardCharsets.UTF_8));
-            }
-        } catch (Exception e) {
-            log.error("JwtServiceImpl | getSecretKey", e);
-        }
         return null;
     }
 
-    public Integer getJwtExpiration() {
-        Integer jwtExpiration = null;
-        Cache cache = cacheManager.getCache(SysConstant.DEFAULT_CACHE);
-        if (cache != null) {
-            jwtExpiration = cache.get(SysConstant.JWT_EXPIRATION_CACHE_KEY, Integer.class);
-            if (jwtExpiration == null) {
-                jwtExpiration = sysConfigurationService.getIntConfig(SysConstant.JWT, SysConstant.JWT_EXPIRATION);
-            } else {
-                jwtExpiration = defaultJwtExpiration;
-            }
-        }
-        return jwtExpiration;
-    }
 }

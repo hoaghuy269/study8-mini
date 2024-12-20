@@ -1,5 +1,6 @@
-package com.study8.mini.rest.v1.req;
+package com.study8.mini.rest.req;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -16,10 +17,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class LoginReq {
+    @Schema(description = "Username", example = "admin")
     @Size(max = 255)
     @NotBlank
     private String username;
 
+    @Schema(description = "Password", example = "password")
     @NotBlank
     private String password;
 }

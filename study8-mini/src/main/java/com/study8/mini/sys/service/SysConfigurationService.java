@@ -1,5 +1,7 @@
 package com.study8.mini.sys.service;
 
+import com.study8.mini.sys.dto.SysConfigurationDto;
+
 import java.util.Map;
 
 /**
@@ -14,4 +16,6 @@ public interface SysConfigurationService {
     Integer getIntConfig(String groupCode, String code);
 
     Map<String, String> getMapConfig(String groupCode);
+
+    SysConfigurationDto getPublicConfig(String groupCode, String code);
 }

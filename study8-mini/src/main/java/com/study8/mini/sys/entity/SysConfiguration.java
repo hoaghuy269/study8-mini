@@ -37,4 +37,7 @@ public class SysConfiguration
 
     @Column(name = "value")
     private String value;
+
+    @Column(name = "public_flag")
+    private Boolean publicFlag;
 }
