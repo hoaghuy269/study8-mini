@@ -114,6 +114,6 @@ public interface AuthRest {
             @ApiResponse(responseCode = CommonSwaggerConstant.RESPONSE_401_CODE_TAG, description = CommonSwaggerConstant.RESPONSE_401_TAG)
     })
     @PostMapping(RestApiConstant.API_RESET_PASSWORD)
-    CommonApiResponse<Void> changePassword(@RequestBody @Valid ResetPasswordReq resetPasswordReq, BindingResult bindingResult,
+    CommonApiResponse<Void> resetPassword(@RequestBody @Valid ResetPasswordReq resetPasswordReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response);
 }

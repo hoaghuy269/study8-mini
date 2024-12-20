@@ -155,7 +155,7 @@ public class AuthRestImpl implements AuthRest {
     }
 
     @Override
-    public CommonApiResponse<Void> changePassword(ResetPasswordReq resetPasswordReq, BindingResult bindingResult,
+    public CommonApiResponse<Void> resetPassword(ResetPasswordReq resetPasswordReq, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response) {
         Locale locale = LanguageUtils.getLanguageFromHeader(request);
         try {
@@ -176,7 +176,7 @@ public class AuthRestImpl implements AuthRest {
 
             return CommonApiResponse.handleSuccess(null, locale);
         } catch (Exception e) {
-            log.error("AuthApiRestImpl | logout", e);
+            log.error("AuthApiRestImpl | resetPassword", e);
             return CommonApiResponse.handleError(e.getMessage(), response);
         }
     }
