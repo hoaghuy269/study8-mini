@@ -182,11 +182,6 @@ public class AuthAccountValidator {
                 CoreExceptionConstant.EXCEPTION_DATA_PROCESSING, locale);
         }
 
-        return true;
-    }
-
-    public boolean validateBeforeResendOtp(AuthAccount account, Locale locale)
-            throws ApplicationException {
         this.validateSendOTP(account.getId(), locale);
 
         return true;
@@ -207,7 +202,16 @@ public class AuthAccountValidator {
         return true;
     }
 
-    private void validateSendOTP(Long accountId, Locale locale)
+    public boolean validateBeforeResetPassword(AuthAccount account, Locale locale)
+            throws ApplicationException {
+        if (ObjectUtils.isEmpty(account)) {
+            ExceptionUtils.throwApplicationException(
+                    AuthExceptionConstant.AUTH_EXCEPTION_ACCOUNT_NOT_EXISTS, locale);
+        }
+        return true;
+    }
+
+    public void validateSendOTP(Long accountId, Locale locale)
             throws ApplicationException {
         SysOtpDto newestOTP = sysOtpService.getNewestOTP(accountId);
         if (ObjectUtils.isNotEmpty(newestOTP) && newestOTP.getSendDate() != null) {

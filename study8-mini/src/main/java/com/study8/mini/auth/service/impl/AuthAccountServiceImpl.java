@@ -291,17 +291,6 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                         throw new ApplicationException(sendEmailResultDto.getErrorMessage());
                     }
                 }
-                case RESEND -> {
-                    boolean isResendValidated = authAccountValidator.validateBeforeResendOtp(
-                            account, locale);
-                    if (isResendValidated) {
-                        SendEmailResultDto sendEmailResultDto = this.sendOtpEmail(account, locale);
-                        if (!sendEmailResultDto.isSuccess()) {
-                            log.error("AuthAccountServiceImpl | forgotPassword | sendEmail");
-                            throw new ApplicationException(sendEmailResultDto.getErrorMessage());
-                        }
-                    }
-                }
                 case VERIFY -> {
                     boolean isOTPValidated = authAccountValidator.validateBeforeVerify(account, otpCode, locale);
                     if (isOTPValidated) {
@@ -313,6 +302,22 @@ public class AuthAccountServiceImpl implements AuthAccountService {
             }
         }
         return result;
+    }
+
+    @Override
+    public void resetPassword(Long userId, String password, Locale locale) throws ApplicationException {
+        AuthAccount account = authAccountRepository.findData(userId).orElse(null);
+
+        boolean isValidated = authAccountValidator.validateBeforeResetPassword(
+                account, locale);
+        if (isValidated && account != null) {
+            account.setPassword(passwordEncoder.encode(password));
+            account.setUpdatedId(userId);
+            account.setUpdatedDate(LocalDateTime.now());
+
+            //Do reset password
+            authAccountRepository.save(account);
+        }
     }
 
     private void handleRegisterProcess(Long businessId, AccountStepEnum step) {
