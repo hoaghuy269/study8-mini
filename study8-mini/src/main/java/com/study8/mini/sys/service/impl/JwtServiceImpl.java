@@ -86,23 +86,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean validateToken(String authToken) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(authToken);
-            return true;
-        } catch (MalformedJwtException e) {
-            log.error("JwtUtils | Invalid JWT token", e);
-        } catch (ExpiredJwtException e) {
-            log.error("JwtUtils | JWT token is expired", e);
-        } catch (UnsupportedJwtException e) {
-            log.error("JwtUtils | JWT token is unsupported", e);
-        } catch (IllegalArgumentException e) {
-            log.error("JwtUtils | JWT claims string is empty", e);
-        }
-        return false;
+        return parseAndValidateToken(authToken, jwtSecret) != null;
     }
 
     @Override
@@ -137,36 +121,14 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean validateTokenResetPassword(String authToken) {
-        SecretKey secretKey = this.getSecretKey(this.getJwtSecretForgotPassword());
-
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(authToken);
-            return true;
-        } catch (MalformedJwtException e) {
-            log.error("JwtUtils | validateTokenResetPassword | Invalid JWT token", e);
-        } catch (ExpiredJwtException e) {
-            log.error("JwtUtils | validateTokenResetPassword | JWT token is expired", e);
-        } catch (UnsupportedJwtException e) {
-            log.error("JwtUtils | validateTokenResetPassword | JWT token is unsupported", e);
-        } catch (IllegalArgumentException e) {
-            log.error("JwtUtils | validateTokenResetPassword | JWT claims string is empty", e);
-        }
-        return false;
+        String secretKey = this.getJwtSecretForgotPassword();
+        return this.parseAndValidateToken(authToken, secretKey) != null;
     }
 
     @Override
     public Long getIdForToken(String token) {
-        SecretKey secretKey = this.getSecretKey(this.getJwtSecretForgotPassword());
-
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return Long.parseLong(claims.getId());
+        Claims claims = this.parseAndValidateToken(token, this.getJwtSecretForgotPassword());
+        return claims != null ? Long.parseLong(claims.getId()) : null;
     }
 
     private SecretKey getSecretKey(String jwtSecret) {
@@ -181,4 +143,25 @@ public class JwtServiceImpl implements JwtService {
     private String getJwtSecretForgotPassword() {
         return sysConfigurationService.getStringConfig(SysConfigConstant.JWT, SysConfigConstant.JWT_FP_SECRET);
     }
+
+    private Claims parseAndValidateToken(String token, String secretKey) {
+        SecretKey key = this.getSecretKey(secretKey);
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (MalformedJwtException e) {
+            log.error("JwtUtils | Invalid JWT token", e);
+        } catch (ExpiredJwtException e) {
+            log.error("JwtUtils | JWT token is expired", e);
+        } catch (UnsupportedJwtException e) {
+            log.error("JwtUtils | JWT token is unsupported", e);
+        } catch (IllegalArgumentException e) {
+            log.error("JwtUtils | JWT claims string is empty", e);
+        }
+        return null;
+    }
+
 }
