@@ -17,4 +17,7 @@ public class SysEmailConstant {
     public static final String EMAIL_PASSWORD = "EMAIL_PASSWORD";
     public static final String EMAIL_002_SUBJECT = "EMAIL_002_SUBJECT";
     public static final String EMAIL_001_SUBJECT = "EMAIL_001_SUBJECT";
+    public static final String EMAIL_VALUE_OTP_CODE = "otpCode";
+    public static final String EMAIL_VALUE_EMAIL = "email";
+    public static final String EMAIL_VALUE_EXPIRED_DATE = "expiredDate";
 }

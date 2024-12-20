@@ -174,13 +174,13 @@ public class AuthAccountServiceImpl implements AuthAccountService {
                         sendEmailDto.setSubject(ResourceUtils.getMessage(SysEmailConstant.EMAIL_001_SUBJECT, locale));
 
                         Map<String, Object> mapData = new HashMap<>();
-                        mapData.put("otpCode", otp.getCode());
-                        mapData.put("email", dto.getEmail());
+                        mapData.put(SysEmailConstant.EMAIL_VALUE_OTP_CODE, otp.getCode());
+                        mapData.put(SysEmailConstant.EMAIL_VALUE_EMAIL, dto.getEmail());
                         if (CommonLanguageEnum.VI.getValue().equals(locale.getLanguage())) {
-                            mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+                            mapData.put(SysEmailConstant.EMAIL_VALUE_EXPIRED_DATE, DateTimeUtils.getDateString(otp.getExpiryDate(),
                                     CommonDateTimeConstant.DATETIME_NO_SECOND));
                         } else {
-                            mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+                            mapData.put(SysEmailConstant.EMAIL_VALUE_EXPIRED_DATE, DateTimeUtils.getDateString(otp.getExpiryDate(),
                                     CommonDateTimeConstant.DATETIME_NO_SECOND_US));
                         }
                         sendEmailDto.setMapData(mapData);
@@ -353,13 +353,13 @@ public class AuthAccountServiceImpl implements AuthAccountService {
         sendEmailDto.setSubject(ResourceUtils.getMessage(SysEmailConstant.EMAIL_002_SUBJECT, locale));
 
         Map<String, Object> mapData = new HashMap<>();
-        mapData.put("email", account.getEmail());
-        mapData.put("otpCode", otp.getCode());
+        mapData.put(SysEmailConstant.EMAIL_VALUE_EMAIL, account.getEmail());
+        mapData.put(SysEmailConstant.EMAIL_VALUE_OTP_CODE, otp.getCode());
         if (CommonLanguageEnum.EN.getValue().equals(locale.getLanguage())) {
-            mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+            mapData.put(SysEmailConstant.EMAIL_VALUE_EXPIRED_DATE, DateTimeUtils.getDateString(otp.getExpiryDate(),
                     CommonDateTimeConstant.DATETIME_NO_SECOND_US));
         } else {
-            mapData.put("expiredDate", DateTimeUtils.getDateString(otp.getExpiryDate(),
+            mapData.put(SysEmailConstant.EMAIL_VALUE_EXPIRED_DATE, DateTimeUtils.getDateString(otp.getExpiryDate(),
                     CommonDateTimeConstant.DATETIME_NO_SECOND));
         }
         sendEmailDto.setMapData(mapData);
